@@ -1,0 +1,416 @@
+---
+name: mkdocs-programmer
+description: >
+  Use this skill for any of the following Russian trigger phrases:
+  "верстай урок N", "верстай все уроки", "запусти сайт", "собери сайт",
+  "задеплой сайт", "проверь сайт", "скриншот урока N", "останови сайт".
+  English equivalents: "build the instructional material", "lay out the lesson",
+  "typeset the draft", "assemble lesson from content".
+---
+
+# mkdocs-programmer
+
+Assembly agent: turns raw lesson content from `content/` into a formatted
+MkDocs Material page wired into site navigation. Build history → `work-log.md`.
+
+---
+
+## OS detection — run first, use throughout
+
+Determine the OS once at the start of every session and use the matching
+command column for all steps below.
+
+```bash
+# Linux
+uname -s            # → Linux
+
+# Windows (PowerShell)
+$PSVersionTable.OS  # → Microsoft Windows ...
+```
+
+| | Linux | Windows (PowerShell) |
+|---|---|---|
+| Path separator | `/` | `\` (or `/` in PS) |
+| Activate venv | `source template/env/bin/activate` | `template\env\Scripts\Activate.ps1` |
+| Kill port 8000 | `fuser -k 8000/tcp` | `netstat -ano \| findstr :8000` → `taskkill /PID <pid> /F` |
+| Temp dir | `/tmp/` | `$env:TEMP\` |
+| List files | `ls` | `dir` or `ls` (PS) |
+| Copy tree | `cp -r src/. dst/` | `Copy-Item -Recurse src\* dst\` |
+| Read file | `cat file` | `Get-Content file` |
+
+> All code blocks below show **Linux** first, then **Windows** where different.
+
+---
+
+## HARD RULES
+
+> **`template/` is read-only — never edit it.**
+> All writes go to the working copy (`$SITE`, determined in Step 0).
+>
+> Inside `$SITE`, only permitted writes:
+> - New files under `docs/lessons/`
+> - `nav:` block in `mkdocs.yml`
+>
+> Never touch: `extra.css`, `overrides/`, `mkdocs.yml` (non-nav sections),
+> `docs/index.md`, `docs/preparation.md`, `docs/homework.md`, `docs/test.md`,
+> `docs/materials.md`, `docs/lessons/lesson_template.md`.
+>
+> **`docs/lessons/lesson_template.md` is the section-set source of truth.**
+> It defines which `##`/`###` sections a lesson page must have. `it-metodist`'s
+> `references/lesson-template.md` is the clean-draft mirror of the same sections.
+> If you change sections here, the methodist draft must be regenerated to match.
+
+---
+
+## Project structure
+
+```
+template/                 ← READ-ONLY master template
+  mkdocs.yml
+  env/                    ← Python venv
+  docs/lessons/
+    lesson_template.md    ← READ-ONLY canonical template
+
+./                        ← WORKING COPY ($SITE; default: project root)
+  mkdocs.yml              ← only nav: is editable
+  overrides/              ← DO NOT TOUCH
+  docs/
+    stylesheets/extra.css ← DO NOT TOUCH
+    lessons/
+      lesson_template.md  ← DO NOT TOUCH
+      lesson_01.md, …     ← agent writes here
+
+content/                  ← INPUT: raw lesson files + images/
+.codex/skills/mkdocs-programmer/
+  SKILL.md | work-log.md
+```
+
+---
+
+## "Материалы урока" page (docs/materials.md)
+
+This page is **not edited by the agent** — only by the curriculum specialist manually.
+It contains download-link cards for files needed during the module.
+
+Four categories:
+
+| Category | Folder in docs/assets/ | File types |
+|----------|------------------------|------------|
+| Презентации | `presentations/` | `.pptx`, `.pdf` — lesson slide decks |
+| Код проекта | `code/` | `.zip` archive or a repository link |
+| Программы для установки | `software/` | `.exe`/`.msi` installers, or an external link without the `download` attribute |
+| Прочие материалы | `extra/` | Cheat sheets, worksheets, `.pdf`, `.docx` |
+
+Each card is an HTML block `<div class="presentation-card">` (see the template in the file).
+For external links (e.g. an official software website) remove the `download` attribute.
+
+---
+
+## Step 0 — Bootstrap working copy
+
+**Linux:**
+```bash
+ls mkdocs.yml 2>/dev/null && echo "EXISTS" || echo "MISSING"
+```
+**Windows:**
+```powershell
+Test-Path mkdocs.yml
+```
+
+If MISSING → copy template (skip venv):
+
+**Linux:**
+```bash
+rsync -a --exclude='env/' template/ ./
+ls docs/lessons/lesson_template.md overrides/main.html mkdocs.yml
+```
+**Windows:**
+```powershell
+Copy-Item -Recurse -Exclude 'env' template\* .\
+Test-Path docs\lessons\lesson_template.md, overrides\main.html, mkdocs.yml
+```
+
+All three paths must exist before proceeding. If EXISTS → proceed.
+
+---
+
+## Step 1 — Read inputs
+
+**Linux:** `ls content/`  
+**Windows:** `dir content\`
+
+Extract lesson number from filename (case-insensitive, normalise to `lesson_NN`):
+
+| Filename example | Slug |
+|-----------------|------|
+| `1 урок.md`, `1_lesson.docx`, `Lesson 1.md` | `lesson_01` |
+| `12 урок.docx` | `lesson_12` |
+
+If no number can be extracted → stop and ask.
+
+Read source file:
+
+**Linux:**
+```bash
+cat "content/<filename>"          # .md / .txt
+```
+**Windows:**
+```powershell
+Get-Content "content\<filename>"  # .md / .txt
+```
+
+For `.docx` (both platforms — only venv activation differs):
+
+**Linux:**
+```bash
+source template/env/bin/activate
+python -c "from docx import Document; [print(p.text) for p in Document('content/<file>.docx').paragraphs]"
+```
+**Windows:**
+```powershell
+template\env\Scripts\Activate.ps1
+python -c "from docx import Document; [print(p.text) for p in Document('content/<file>.docx').paragraphs]"
+```
+Install if needed: `pip install python-docx --break-system-packages`
+
+Read canonical template:
+
+**Linux:** `cat docs/lessons/lesson_template.md`  
+**Windows:** `Get-Content docs\lessons\lesson_template.md`
+
+Copy images if present:
+
+**Linux:** `cp -r content/images/. docs/assets/images/`  
+**Windows:** `Copy-Item -Recurse content\images\* docs\assets\images\`
+
+**Missing field policy:**
+
+| Field | Required? | If missing |
+|-------|-----------|------------|
+| title, age, duration | Yes | Stop and ask |
+| Stage timings | No | Default distribution (see below) |
+| homework | No | `–` |
+| Teacher notes | No | `–` in each subsection |
+| Evaluation criteria | No | 4 generic criteria |
+
+---
+
+## Step 2 — Write output file
+
+Create `docs/lessons/<slug>.md`. Follow `lesson_template.md` exactly —
+same sections, same heading hierarchy, same front-matter keys.
+
+**Drift-guard (run before writing).** Compare the `##` section set of the source
+draft against `docs/lessons/lesson_template.md`:
+- Section present in the canonical template but missing from the draft → do NOT
+  silently drop it. Emit the section (filled if the draft has matching content,
+  else `–`) and flag it in the final report as "section absent in draft".
+- Section in the draft but not in the canonical template → keep it, but flag it —
+  it signals the two templates have drifted and need re-syncing.
+
+**Front matter** — exactly the keys present in the canonical template
+(`lesson_number`, `duration`, `age`). The page title comes from the `# Урок …` H1.
+```yaml
+---
+lesson_number: 2
+duration: 120 мин
+age: 10–12 лет
+---
+```
+If you add `title`/`description` keys to the canonical template later, mirror them
+here — the canonical template stays the source of truth for the key set.
+
+**Formatting rules:**
+- Concept explanations → `!!! note "…"`
+- Warnings → `!!! warning`
+- Tips → `!!! tip "…"`
+- Multi-step tool variants → `=== "Tab"` tabbed blocks
+- Feature overviews → `<div class="grid cards" markdown>`
+
+**Screenshot markers** (`[СКРИНШОТ: описание]`, placed by `it-metodist`):
+Each marker = one image insertion point. Resolve each one:
+- Image exists in `docs/assets/images/` (copied in Step 1) → replace the marker with
+  `![описание](../assets/images/<file>.png)`. Match by lesson number / order of markers.
+- No matching image yet → keep the marker text as a visible HTML comment so nothing
+  silently disappears: `<!-- TODO СКРИНШОТ: описание -->`, and list it in the report.
+Never leave a raw `[СКРИНШОТ: …]` marker in the published page.
+
+**`!!! slide` blocks** — wrap every fragment shown to students:
+
+| Section | Slides |
+|---------|--------|
+| Цель урока | 1 |
+| Теоретическая часть | 1 per concept |
+| Практическая работа | 1 |
+| Самостоятельная работа → Задание | 1 |
+| Подведение итогов | 1 |
+| Домашнее задание | 1 |
+
+Never put `!!! slide` inside: Методические заметки, Действия преподавателя,
+Критерии оценки, timing tables.
+
+```markdown
+!!! slide "Заголовок (3–6 слов)"
+    Контент — любой markdown, отступ 4 пробела.
+```
+
+---
+
+## Step 3 — Register in navigation
+
+Edit only `nav:` in `mkdocs.yml`:
+```yaml
+  - Уроки:
+      - 1 урок: lessons/lesson_01.md
+      - N урок: lessons/<slug>.md    # ← add here
+```
+
+If slug already listed → update path, don't duplicate.
+
+---
+
+## Step 4 — Visual verification
+
+**Linux:**
+```bash
+fuser -k 8000/tcp 2>/dev/null; sleep 1
+source template/env/bin/activate && mkdocs serve > /tmp/mkdocs.log 2>&1 &
+sleep 4 && tail -5 /tmp/mkdocs.log
+```
+**Windows:**
+```powershell
+$pid8000 = (netstat -ano | findstr :8000 | Select-String "LISTENING" | ForEach-Object { ($_ -split "\s+")[-1] } | Select-Object -First 1)
+if ($pid8000) { taskkill /PID $pid8000 /F }
+template\env\Scripts\Activate.ps1
+Start-Process -NoNewWindow mkdocs -ArgumentList "serve" -RedirectStandardOutput "$env:TEMP\mkdocs.log"
+Start-Sleep 4; Get-Content "$env:TEMP\mkdocs.log" -Tail 5
+```
+
+Expect: `Serving on http://127.0.0.1:8000/...` — if errors appear, fix before continuing.
+
+Install Playwright and take screenshot:
+
+**Linux:**
+```bash
+pip3 install playwright --break-system-packages -q
+python3 -m playwright install chromium
+```
+**Windows:**
+```powershell
+pip install playwright -q
+python -m playwright install chromium
+```
+
+Screenshot script (same on both platforms, adjust temp path).
+The base path is derived from `site_url` in `mkdocs.yml` — never hardcode it,
+since it changes per module:
+```python
+import asyncio, re
+from urllib.parse import urlparse
+from playwright.async_api import async_playwright
+
+SCREENSHOT = "/tmp/lesson_verify.png"          # Linux
+# SCREENSHOT = r"C:\Users\<user>\AppData\Local\Temp\lesson_verify.png"  # Windows
+SLUG = "lesson_01"                              # ← set to the slug just written
+
+# Derive base path from site_url (e.g. https://.../mkdocs-test/ → /mkdocs-test/)
+m = re.search(r"^\s*site_url:\s*(\S+)", open("mkdocs.yml", encoding="utf-8").read(), re.M)
+base = urlparse(m.group(1)).path if m else "/"   # mkdocs serve mirrors this path
+url = f"http://127.0.0.1:8000{base.rstrip('/')}/lessons/{SLUG}/"
+
+async def main():
+    async with async_playwright() as p:
+        page = await (await p.chromium.launch()).new_context(
+            viewport={"width":1440,"height":900}).new_page()
+        await page.goto(url)
+        await page.wait_for_load_state("networkidle")
+        await page.screenshot(path=SCREENSHOT)
+asyncio.run(main())
+```
+
+Verify in screenshot:
+- [ ] Title and breadcrumbs correct
+- [ ] Admonitions render (colour + icon)
+- [ ] Code blocks have syntax highlighting
+- [ ] No raw Markdown visible
+- [ ] Nav sidebar correct position
+- [ ] No 404
+
+Fix any issues, re-screenshot. Stop server:
+
+**Linux:** `fuser -k 8000/tcp`  
+**Windows:** `taskkill /PID $pid8000 /F`
+
+---
+
+## Step 5 — Update work log
+
+```
+| YYYY-MM-DD | Built lesson N — <title> | docs/lessons/<slug>.md, mkdocs.yml |
+```
+
+---
+
+## Default timing distribution
+
+Stages must sum exactly to total duration. Round to whole minutes.
+
+| Stage | Default |
+|-------|---------|
+| Организационный момент | 5 мин (fixed) |
+| Теоретическая часть | 25% of remaining |
+| Практическая работа | 40% of remaining |
+| Самостоятельная работа | 25% of remaining |
+| Подведение итогов | 10 мин (fixed) |
+
+---
+
+## Field mapping
+
+| Raw content | Template section |
+|-------------|-----------------|
+| Title, number | Front matter + H1 |
+| Course / module | Общая информация |
+| Age, duration | Front matter + Общая информация |
+| Goal | Цель урока |
+| Timings | План урока + stage headings |
+| Theory | §2 Теоретическая часть |
+| Guided task | §3 Практическая работа |
+| Solo task + rubric | §4 Самостоятельная работа |
+| Wrap-up | §5 Подведение итогов |
+| Homework | Домашнее задание |
+| Difficulties / hints / extension | Методические заметки (3 subsections) |
+
+---
+
+## Common gotchas
+
+| Problem | Fix |
+|---------|-----|
+| rsync "no such file" (Linux) | Run from project root (contains `template/` and `content/`) |
+| Copy-Item fails (Windows) | Run PowerShell as Administrator, or check path separators |
+| `lesson_template.md` missing after copy | Re-run Step 0 without excluding `docs/` |
+| Port 8000 in use (Linux) | `fuser -k 8000/tcp` |
+| Port 8000 in use (Windows) | `netstat -ano \| findstr :8000` → `taskkill /PID <pid> /F` |
+| Activate.ps1 blocked (Windows) | `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser` |
+| `custom_dir` not found | Must point to `overrides/` inside `template/` |
+| Front matter not parsed | Add `meta` plugin under `plugins:` in `mkdocs.yml` |
+| Page missing from nav | Add path under `nav: → Уроки:` |
+| Admonition not rendering | Indent content exactly 4 spaces |
+| Screenshot blank | Increase sleep to 6–8 s after `mkdocs serve` |
+
+---
+
+## Definition of done
+
+- [ ] Working copy exists at project root (`mkdocs.yml` present)
+- [ ] `docs/lessons/<slug>.md` written; all placeholders replaced
+- [ ] Front matter keys match the canonical template (`lesson_number`, `duration`, `age`)
+- [ ] Stage timings sum to total duration
+- [ ] `nav:` updated in `mkdocs.yml`
+- [ ] Screenshot confirms correct rendering
+- [ ] No raw placeholder text (`[Название урока]`, `___ мин`, etc.)
+- [ ] All `[СКРИНШОТ: …]` markers resolved (image embed or `<!-- TODO -->` comment)
+- [ ] `!!! slide` present in every content section; absent from teacher sections
+- [ ] `template/` unchanged (`git diff template/` is clean)
+- [ ] Row appended to `work-log.md`

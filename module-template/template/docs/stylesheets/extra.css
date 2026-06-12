@@ -1,0 +1,367 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   ВНИМАНИЕ: тема рассчитана ТОЛЬКО на тёмную схему (slate). Цвета chrome ниже
+   захардкожены под тёмный фон; светлой схемы (palette toggle) нет.
+   Палитра акцентов (--accent-*) продублирована в docs/assets/presentation.html
+   — это автономный файл, он не видит переменные Material. Меняйте В ДВУХ МЕСТАХ.
+   ────────────────────────────────────────────────────────────────────────── */
+:root {
+    /* Акценты заголовков — единый источник (зеркалить в presentation.html) */
+    --accent-orange: hsl(30, 70%, 65%);   /* H1 */
+    --accent-green:  hsl(120, 35%, 58%);  /* H2, активные пункты, прогресс */
+    --accent-blue:   hsl(210, 45%, 65%);  /* H3 */
+
+    /* Тёмный chrome: шапка / вкладки / поиск / drawer */
+    --chrome-header-bg:     #0d0d0d;
+    --chrome-tabs-bg:       #111111;
+    --chrome-search-bg:     #2a2a2a;
+    --chrome-search-border: #444;
+    --chrome-search-fg:     #e0e0e0;
+    --chrome-muted-fg:      #888;
+    --chrome-drawer-link:   #ccc;
+    --chrome-drawer-hover:  #1e1e1e;
+}
+
+/* ── Hero-баннер главной страницы ── */
+.hero-banner {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 7.2rem);
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: var(--md-default-bg-color);
+}
+
+.hero-banner__image {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+}
+
+.hero-banner__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.hero-banner__title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+    margin: 0;
+    border: none;
+    padding: 1rem 2rem;
+    text-align: center;
+}
+
+/* ── Поиск по центру шапки ── */
+.md-header__inner {
+    display: flex;
+    align-items: center;
+}
+
+.md-search {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 0 2rem;
+}
+
+.md-search__form {
+    width: 100%;
+    max-width: 480px;
+    background: var(--chrome-search-bg) !important;
+    border: 1px solid var(--chrome-search-border) !important;
+    border-radius: 8px !important;
+}
+
+.md-search__input {
+    background: transparent !important;
+    color: var(--chrome-search-fg) !important;
+}
+
+.md-search__input::placeholder {
+    color: var(--chrome-muted-fg) !important;
+}
+
+.md-search__icon {
+    color: var(--chrome-muted-fg) !important;
+}
+
+/* ── Тёмная шапка ── */
+.md-header {
+    background-color: var(--chrome-header-bg);
+}
+
+.md-tabs {
+    background-color: var(--chrome-tabs-bg);
+}
+
+/* ── Изображения: скругление, без рамки ── */
+.md-typeset img {
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+/* ── Ширина контентной области ── */
+.md-grid {
+    max-width: 95%;
+}
+
+/* ── Разделительная линия между этапами ── */
+.md-content hr {
+    border: none;
+    border-top: 2px solid var(--md-default-fg-color--lightest);
+    margin: 2rem 0;
+}
+
+/* ── Акцентные заголовки ── */
+.md-typeset h1 {
+    color: var(--accent-orange);
+}
+
+.md-typeset h2 {
+    color: var(--accent-green);
+    border-left: 4px solid var(--accent-green);
+    padding-left: 0.75rem;
+    margin-top: 2rem;
+}
+
+.md-typeset h3 {
+    color: var(--accent-blue);
+}
+
+/* ── Таблицы данных: карточный стиль для всех, без завязки на порядок блоков ── */
+.md-typeset table:not([class]) {
+    border: 1px solid var(--md-default-fg-color--lighter);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.md-typeset table:not([class]) th {
+    color: var(--md-primary-bg-color);
+}
+
+/* ── Блок цитаты (возрастные рекомендации) ── */
+.md-content blockquote {
+    border-left: 4px solid var(--md-accent-fg-color);
+    background: var(--md-accent-fg-color--transparent);
+    border-radius: 0 0.25rem 0.25rem 0;
+    padding: 0.75rem 1rem;
+}
+
+/* ── Активная вкладка в шапке ── */
+.md-tabs__item--active .md-tabs__link,
+.md-tabs__item--active .md-tabs__link:hover {
+    color: var(--accent-green) !important;
+    opacity: 1 !important;
+}
+
+/* ── Активный пункт навигации ── */
+.md-nav__link--active {
+    color: var(--accent-green) !important;
+    font-weight: 600;
+}
+
+/* ── Чеклисты ── */
+.md-typeset .task-list-item {
+    list-style: none;
+}
+
+/* ── Презентации ── */
+.presentations {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.presentation-card {
+    border: 1px solid var(--md-default-fg-color--lightest);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: var(--md-code-bg-color);
+}
+
+.presentation-card h2 {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: none;
+    border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.presentation-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    gap: 0.75rem;
+    color: var(--md-default-fg-color--light);
+}
+
+.presentation-icon {
+    font-size: 3.5rem;
+    line-height: 1;
+}
+
+.presentation-name {
+    font-size: 0.9rem;
+}
+
+.presentation-btn {
+    display: block;
+    text-align: center;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    text-decoration: none;
+    background: var(--md-accent-fg-color);
+    color: var(--md-primary-bg-color) !important;
+    font-weight: 500;
+    border-top: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.presentation-btn:hover {
+    opacity: 0.85;
+}
+
+/* ── Admonition: slide (блок для показа ученикам) ── */
+:root {
+  --md-admonition-icon--slide: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M2 3h20v14H2V3zm2 2v10h16V5H4zm7 12v2H8v2h8v-2h-3v-2h-2z'/></svg>");
+}
+
+.md-typeset .admonition.slide {
+  border-color: hsl(210, 60%, 55%);
+}
+.md-typeset .slide > .admonition-title {
+  background-color: hsla(210, 60%, 55%, 0.12);
+  color: hsl(210, 60%, 70%);
+}
+.md-typeset .slide > .admonition-title::before {
+  background-color: hsl(210, 60%, 55%);
+  -webkit-mask-image: var(--md-admonition-icon--slide);
+          mask-image: var(--md-admonition-icon--slide);
+}
+
+/* ── Кнопка запуска презентации урока ── */
+.lesson-present-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: 1px solid hsl(120, 35%, 45%);
+    color: hsl(120, 35%, 65%);
+    padding: 0.45rem 1.1rem;
+    border-radius: 0.5rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 1.75rem;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.lesson-present-btn:hover {
+    background: hsla(120, 35%, 50%, 0.12);
+    border-color: var(--accent-green);
+    color: hsl(120, 35%, 70%);
+}
+.lesson-present-btn span {
+    font-size: 0.75rem;
+}
+
+@media (max-width: 768px) {
+    .lesson-present-btn {
+        display: none;
+    }
+    .md-header__title {
+        display: none;
+    }
+
+    /* Баннер на мобильном: картинка по ширине, заголовок под ней */
+    .hero-banner {
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .hero-banner__image {
+        width: 100%;
+        height: auto;
+        object-fit: unset;
+    }
+    .hero-banner__overlay {
+        position: static;
+        background: transparent;
+        padding: 1rem 1rem 0;
+    }
+    .hero-banner__title {
+        font-size: 1.4rem;
+        text-shadow: none;
+        color: var(--accent-orange);
+        padding: 0;
+        text-align: center;
+    }
+
+    /* Drawer: фон совпадает с шапкой */
+    .md-nav--primary,
+    .md-sidebar--primary .md-sidebar__scrollwrap {
+        background-color: var(--chrome-header-bg);
+    }
+
+    /* Drawer: убираем синюю шапку с названием модуля */
+    .md-nav--primary .md-nav__title[for="__drawer"] {
+        background-color: var(--chrome-header-bg);
+        color: #666;
+        box-shadow: none;
+    }
+
+    /* Drawer: убираем разделительные линии */
+    .md-nav--primary .md-nav__item {
+        border-top: none;
+    }
+
+    /* Drawer: стиль пунктов как у desktop-вкладок */
+    .md-nav--primary .md-nav__link {
+        color: var(--chrome-drawer-link);
+        font-size: 0.85rem;
+        font-weight: 500;
+        padding: 0.65rem 1rem;
+        border-radius: 0.4rem;
+        margin: 0.1rem 0.5rem;
+        transition: background 0.15s, color 0.15s;
+    }
+    .md-nav--primary .md-nav__link:hover {
+        background: var(--chrome-drawer-hover);
+        color: #fff;
+    }
+    .md-nav--primary .md-nav__link--active {
+        color: var(--accent-green) !important;
+        background: hsla(120, 35%, 50%, 0.08);
+        font-weight: 600;
+    }
+}
+
+/* ── Печать ── */
+@media print {
+    .md-header,
+    .md-tabs,
+    .md-sidebar,
+    .md-footer {
+        display: none !important;
+    }
+
+    .md-content {
+        margin: 0 !important;
+        max-width: 100% !important;
+    }
+}

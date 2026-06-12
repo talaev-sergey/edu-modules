@@ -1,0 +1,30 @@
+{% extends "main.html" %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+  var main = document.querySelector('.md-main');
+  if (main) main.style.flex = 'none';
+  var container = document.querySelector('.md-container');
+  if (container) container.style.minHeight = '0';
+  document.documentElement.style.minHeight = '0';
+  document.body.style.minHeight = '0';
+  var grid = document.querySelector('.md-main .md-grid');
+  if (grid) { grid.style.maxWidth = '100%'; grid.style.padding = '0'; }
+  var inner = document.querySelector('.md-content__inner');
+  if (inner) { inner.style.padding = '0'; inner.style.margin = '0'; }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="hero-banner">
+    <img
+        src="{{ 'assets/images/banner.webp' | url }}"
+        alt="Баннер модуля"
+        class="hero-banner__image"
+    />
+    <div class="hero-banner__overlay">
+        <h1 class="hero-banner__title">{{ config.site_name }}</h1>
+    </div>
+</div>
+{% endblock %}

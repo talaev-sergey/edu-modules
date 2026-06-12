@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (!window.location.pathname.includes('/lessons/')) return;
+
+    function parseSlidesFromAdmonitions(typeset) {
+      const blocks = typeset.querySelectorAll('.admonition.slide');
+      if (!blocks.length) return null;
+
+      return Array.from(blocks).map(block => {
+        const titleEl = block.querySelector('.admonition-title');
+        const title = titleEl ? titleEl.textContent.trim() : 'Слайд';
+
+        const clone = block.cloneNode(true);
+        clone.querySelector('.admonition-title')?.remove();
+
+        return {
+          title,
+          html: '<h2>' + title + '</h2>' + clone.innerHTML
+        };
+      });
+    }
+
+    function parseSlidesFromHeadings(typeset) {
+      const slides = [];
+      let current = null;
+
+      for (const node of typeset.children) {
+        const tag = node.tagName;
+        if (tag === 'H1') {
+          current = null;
+          slides.push({ title: node.textContent.trim(), html: node.outerHTML });
+        } else if (tag === 'H2') {
+          current = { title: node.textContent.trim(), html: node.outerHTML };
+          slides.push(current);
+        } else if (tag === 'HR') {
+          // skip
+        } else if (current) {
+          current.html += node.outerHTML;
+        } else if (slides.length > 0) {
+          slides[slides.length - 1].html += node.outerHTML;
+        }
+      }
+
+      return slides.filter(s => s.title.length > 0);
+    }
+
+    function parseSlides() {
+      const typeset = document.querySelector('.md-typeset');
+      if (!typeset) return [];
+      return parseSlidesFromAdmonitions(typeset) || parseSlidesFromHeadings(typeset);
+    }
+
+    function getSiteRoot() {
+      const parts = window.location.pathname.split('/');
+      const idx = parts.findIndex(p => p === 'lessons');
+      if (idx > 0) return window.location.origin + parts.slice(0, idx).join('/') + '/';
+      return window.location.origin + '/';
+    }
+
+    function getMeta() {
+      const moduleEl = document.querySelector('.md-header__title .md-ellipsis')
+                    || document.querySelector('.md-header__title');
+      const lessonEl = document.querySelector('.md-typeset h1');
+      return {
+        module: moduleEl ? moduleEl.textContent.trim() : '',
+        lesson: lessonEl ? lessonEl.textContent.trim() : ''
+      };
+    }
+
+    function launchPresentation() {
+      const slides = parseSlides();
+      if (!slides.length) return;
+      localStorage.setItem('lesson_slides', JSON.stringify(slides));
+      localStorage.setItem('lesson_meta', JSON.stringify(getMeta()));
+      window.open(getSiteRoot() + 'assets/presentation.html', '_blank');
+    }
+
+    const btn = document.createElement('button');
+    btn.className = 'lesson-present-btn';
+    btn.innerHTML = '<span>▶</span> Запустить презентацию';
+    btn.addEventListener('click', launchPresentation);
+
+    const typeset = document.querySelector('.md-typeset');
+    if (typeset) typeset.insertBefore(btn, typeset.firstChild);
+  });
+</script>
+{% endblock %}
