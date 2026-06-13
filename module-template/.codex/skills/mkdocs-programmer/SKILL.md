@@ -10,8 +10,9 @@ description: >
 
 # mkdocs-programmer
 
-Assembly agent: turns raw lesson content from `content/` into a formatted
-MkDocs Material page wired into site navigation. Build history → `work-log.md`.
+Assembly agent: turns the methodist's lesson draft — a Word `.docx` file in
+`content/` produced by `it-metodist` — into a formatted MkDocs Material page wired
+into site navigation. Build history → `work-log.md`.
 
 ---
 
@@ -80,7 +81,7 @@ template/                 ← READ-ONLY master template
       lesson_template.md  ← DO NOT TOUCH
       lesson_01.md, …     ← agent writes here
 
-content/                  ← INPUT: raw lesson files + images/
+content/                  ← INPUT: methodist draft lesson_NN.docx + images/
 .codex/skills/mkdocs-programmer/
   SKILL.md | work-log.md
 ```
@@ -136,6 +137,9 @@ All three paths must exist before proceeding. If EXISTS → proceed.
 
 ## Step 1 — Read inputs
 
+The methodist draft is a Word `.docx` file in `content/` (e.g. `lesson_03.docx`).
+Look for it first.
+
 **Linux:** `ls content/`  
 **Windows:** `dir content\`
 
@@ -143,23 +147,12 @@ Extract lesson number from filename (case-insensitive, normalise to `lesson_NN`)
 
 | Filename example | Slug |
 |-----------------|------|
-| `1 урок.md`, `1_lesson.docx`, `Lesson 1.md` | `lesson_01` |
+| `lesson_01.docx`, `1 урок.docx`, `Lesson 1.docx` | `lesson_01` |
 | `12 урок.docx` | `lesson_12` |
 
 If no number can be extracted → stop and ask.
 
-Read source file:
-
-**Linux:**
-```bash
-cat "content/<filename>"          # .md / .txt
-```
-**Windows:**
-```powershell
-Get-Content "content\<filename>"  # .md / .txt
-```
-
-For `.docx` (both platforms — only venv activation differs):
+Read the `.docx` draft (both platforms — only venv activation differs):
 
 **Linux:**
 ```bash
@@ -172,6 +165,13 @@ template\env\Scripts\Activate.ps1
 python -c "from docx import Document; [print(p.text) for p in Document('content/<file>.docx').paragraphs]"
 ```
 Install if needed: `pip install python-docx --break-system-packages`
+
+> `Document(...).paragraphs` yields paragraph text but not tables. Read tables too —
+> Общая информация, План урока, and Критерии оценки are tables in the draft:
+> `for tbl in Document(...).tables: for row in tbl.rows: print([c.text for c in row.cells])`
+
+If a draft happens to be plain `.md`/`.txt` instead, read it directly
+(**Linux:** `cat "content/<file>"` · **Windows:** `Get-Content "content\<file>"`).
 
 Read canonical template:
 

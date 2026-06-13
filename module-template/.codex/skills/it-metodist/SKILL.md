@@ -14,8 +14,9 @@ description: >
 # it-metodist
 
 A curriculum-specialist agent that turns a module strategy and input materials into a
-draft for a single lesson. The draft is clean Markdown in `content/`. MkDocs layout
-is handled by a separate agent (`mkdocs-programmer`).
+draft for a single lesson. The draft is a Word `.docx` file in `content/`, generated
+with `python-docx`. MkDocs layout is handled by a separate agent (`mkdocs-programmer`),
+which reads this `.docx` draft.
 
 ---
 
@@ -33,9 +34,10 @@ is handled by a separate agent (`mkdocs-programmer`).
 > matter, no `!!! slide`, criteria as a table). If a section is added, removed, or
 > renamed in the canonical file, mirror that change in `references/lesson-template.md`.
 >
-> **No YAML front matter and no MkDocs syntax.**
-> The file starts with `# Урок N — Название`. No `---` at the top,
-> no `!!! note`, `=== "Tab"`, `<div class="grid cards">`, etc.
+> **No MkDocs syntax in the draft text.**
+> Plain content only — no `!!! note`, `=== "Tab"`, `<div class="grid cards">`, etc.
+> The first element of the `.docx` is a Heading 1 paragraph `Урок N — Название`.
+> Headings map to Word heading styles, tables to Word tables (see Step 4).
 >
 > **Audience** — school students aged 6–17. Environment — Windows 10/11.
 > Most students have weak PC and OS skills (see "Audience Context").
@@ -62,7 +64,7 @@ This means — always:
 ```
 content/           ← input materials (.md, .txt, .docx)
   strategy.md      ← module strategy
-  lesson_NN.md     ← lesson draft
+  lesson_NN.docx   ← lesson draft (Word, generated with python-docx)
 .codex/skills/it-metodist/
   SKILL.md
   work-log.md
@@ -204,6 +206,51 @@ If Python is unavailable:
 
 ---
 
+## Step 1.5 — Python Dependencies
+
+Both reading `.docx` input materials (Step 2) and writing the `.docx` draft (Step 4)
+require the `python-docx` package. Use the project venv so packages land in the
+project environment, not globally — same venv the `mkdocs-programmer` agent uses.
+
+Activate the venv (if `template/env` exists):
+
+**Linux:**
+```bash
+source template/env/bin/activate
+```
+**Windows (cmd):**
+```cmd
+template\env\Scripts\activate.bat
+```
+
+Then ensure `python-docx` is installed. It is declared in `template/requirements.txt`,
+so install from there (also pulls MkDocs deps if the venv was just created):
+
+**Linux:**
+```bash
+pip install -r template/requirements.txt
+```
+**Windows:**
+```cmd
+pip install -r template\requirements.txt
+```
+
+If there is no project venv, install just `python-docx` into the system interpreter:
+
+**Linux:**
+```bash
+pip install python-docx --break-system-packages
+```
+**Windows:**
+```cmd
+pip install python-docx
+```
+
+`python -c "import docx"` with no error confirms the dependency is ready. Keep the
+venv active for Steps 2 and 4.
+
+---
+
 ## Step 2 — Read the Materials
 
 **Linux:**
@@ -218,21 +265,9 @@ dir content\
 type content\strategy.md
 ```
 
-For `.docx` (cross-platform):
+For `.docx` (cross-platform; `python-docx` was prepared in Step 1.5):
 ```python
 python -c "from docx import Document; [print(p.text) for p in Document('content/<file>.docx').paragraphs]"
-```
-
-If `python-docx` is not installed:
-
-**Linux:**
-```bash
-pip install python-docx --break-system-packages
-```
-
-**Windows:**
-```cmd
-pip install python-docx
 ```
 
 ## Step 3 — Read the Template
@@ -247,15 +282,17 @@ cat .codex/skills/it-metodist/references/lesson-template.md
 type .codex\skills\it-metodist\references\lesson-template.md
 ```
 
-## Step 4 — Write the Draft
+## Step 4 — Write the Draft (.docx)
 
-Create `content/lesson_NN.md`. Language: Russian. Style: accessible, avoid bureaucratic phrasing.
-PC instructions — account for weak Windows knowledge (see "Audience Context").
+Compose the full lesson content first (Russian; accessible style, no bureaucratic
+phrasing; PC instructions account for weak Windows knowledge — see "Audience Context").
+Follow the fixed section set from `references/lesson-template.md` exactly.
 
 Before writing sections 3 and 4, consult the bundled method references
 (see "Method References" above) — they shape practice design and the help notes.
 
-**Screenshot markers.** Instead of verbal interface descriptions — use a marker:
+**Screenshot markers.** Instead of verbal interface descriptions — use a marker as a
+plain paragraph in the document:
 ```
 [СКРИНШОТ: what exactly is visible, at which stage, which tool]
 ```
@@ -268,17 +305,59 @@ Examples:
 One marker = one screenshot. Place exactly at the insertion point.
 Screenshots are taken manually by the curriculum specialist; the programmer agent embeds them in MkDocs.
 
+**Output format.** The draft is a Word `.docx` built with `python-docx`
+(prepared in Step 1.5), saved as `content/lesson_NN.docx`. Map the template structure
+to Word elements:
+
+| Draft element | python-docx call |
+|---------------|------------------|
+| `# Урок N — …` | `doc.add_heading("Урок N — …", level=1)` |
+| `## Section` | `doc.add_heading(text, level=2)` |
+| `### Subsection` | `doc.add_heading(text, level=3)` |
+| `#### Concept` | `doc.add_heading(text, level=4)` |
+| Body paragraph | `doc.add_paragraph(text)` |
+| `**bold**` label | `p.add_run("…").bold = True` |
+| Numbered step | `doc.add_paragraph(text, style="List Number")` |
+| Bullet point | `doc.add_paragraph(text, style="List Bullet")` |
+| Table | `doc.add_table(rows, cols)`, set `table.style = "Table Grid"` |
+| `[СКРИНШОТ: …]` marker | `doc.add_paragraph("[СКРИНШОТ: …]")` |
+
+Write a Python script that builds the document and saves it. Skeleton:
+
+```python
+from docx import Document
+
+doc = Document()
+doc.add_heading("Урок N — Название", level=1)
+
+doc.add_heading("Общая информация", level=2)
+t = doc.add_table(rows=0, cols=2); t.style = "Table Grid"
+for k, v in [("Курс", "…"), ("Модуль", "…"), ("Номер урока", "N"),
+             ("Возраст учащихся", "N–N лет"), ("Продолжительность", "120 мин")]:
+    c = t.add_row().cells; c[0].text = k; c[1].text = v
+
+doc.add_heading("Цель урока", level=2)
+doc.add_paragraph("К концу урока ученики смогут …")
+
+# … remaining sections in the fixed order …
+
+doc.save("content/lesson_NN.docx")
+```
+
+Empty section → a paragraph with a single dash `–` under its heading. Never drop a
+section. No emojis, no MkDocs syntax in any string.
+
 ## Step 5 — Update the Work Log
 
 ```
-| YYYY-MM-DD | Lesson N draft — <topic> | content/lesson_NN.md |
+| YYYY-MM-DD | Lesson N draft — <topic> | content/lesson_NN.docx |
 ```
 
 ## Step 6 — Output the Report
 
 ```
 Report: lesson N — [Topic]
-File: content/lesson_NN.md
+File: content/lesson_NN.docx
 Duration: ___ min | Age: N–N лет | Theory mode: A/B
 
 Timing:
@@ -298,7 +377,8 @@ Notes for the curriculum specialist:
 
 ## Draft Structure
 
-Detailed reference — in `references/lesson-template.md`. Condensed outline:
+Detailed reference — in `references/lesson-template.md`. This is the *content* spec;
+the output is a `.docx` (see Step 4 for the element mapping). Condensed outline:
 
 ```
 # Урок N — [Title]
@@ -352,8 +432,10 @@ personalisation for an individual child. The draft requires review by a live cur
 | Theory 50%+ as a single block | Use Mode B |
 | All theory in "Записи в блокнот" | Terms only, ≤ 6 |
 | Vague assessment criteria | Use a concrete, observable action |
-| File starts with `---` | Start with `# Урок N —` |
-| MkDocs syntax in the text | Clean Markdown only |
+| Draft saved as `.md` | Output must be `content/lesson_NN.docx` (python-docx) |
+| `python-docx` missing / not installed | Prepare it in Step 1.5 before writing |
+| Headings written as `#`/`##` text instead of Word styles | Use `add_heading(level=…)` |
+| MkDocs syntax in the text | Plain content only |
 | Emojis in the text | Remove |
 | PC instruction ignores Windows context | Full path, Windows element names |
 | Verbal interface description instead of marker | Use `[СКРИНШОТ: ...]` |
@@ -365,8 +447,8 @@ personalisation for an individual child. The draft requires review by a live cur
 ## Definition of Done
 
 - [ ] All required fields received
-- [ ] OS detected (Step 1), `strategy.md` read, template read
-- [ ] `content/lesson_NN.md` created, starts with `# Урок —`
+- [ ] OS detected (Step 1), `python-docx` ready (Step 1.5), `strategy.md` read, template read
+- [ ] `content/lesson_NN.docx` created, first heading = `Урок N — …` (Heading 1)
 - [ ] All template sections present; empty ones = `–`
 - [ ] Placeholders replaced, timing sum = lesson duration
 - [ ] Theory ≤ 25% (or Mode B justified)
@@ -374,6 +456,6 @@ personalisation for an individual child. The draft requires review by a live cur
 - [ ] "Записи в блокнот" section present
 - [ ] PC instructions account for Windows and low-skill users
 - [ ] `[СКРИНШОТ: ...]` markers placed
-- [ ] No emojis, no MkDocs syntax, no YAML front matter
+- [ ] No emojis, no MkDocs syntax
 - [ ] `work-log.md` updated (Step 5)
 - [ ] Report output to chat (Step 6)

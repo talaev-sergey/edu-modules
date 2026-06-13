@@ -1,10 +1,12 @@
 # Reference lesson draft template
 
-> This file is the structural reference. The agent must follow it exactly.
+> This file is the structural reference for the draft *content*. The agent must follow
+> it exactly. The output itself is a Word `.docx` built with `python-docx`
+> (see SKILL.md Step 4 for the heading/table mapping), not a Markdown file.
 > All lines in `[square brackets]` are placeholders to be replaced.
 > Lines `___ мин` are timings to be calculated and filled in.
 >
-> The draft does NOT contain YAML front matter — the file starts directly with the `#` heading.
+> The draft does NOT contain YAML front matter — it begins with the `Урок N — …` heading.
 > The draft does NOT contain MkDocs syntax (`!!! note`, `=== "Tab"`, etc.).
 > The draft does NOT contain emojis — not in headings, not in body text.
 > Structure is FIXED: all sections are always present in the same order.
