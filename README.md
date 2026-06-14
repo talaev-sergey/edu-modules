@@ -1,58 +1,42 @@
 # Как написать модуль
 
+<p align="center">
+  <a href="https://squidfunk.github.io/mkdocs-material/"><img src="https://img.shields.io/badge/Material_for_MkDocs-526CFE?logo=materialformkdocs&logoColor=white" alt="Material for MkDocs"></a>
+  <img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white" alt="Python">
+  <a href="https://github.com/talaev-sergey/edu-modules/commits/master"><img src="https://img.shields.io/github/last-commit/talaev-sergey/edu-modules" alt="Last commit"></a>
+  <img src="https://img.shields.io/github/languages/top/talaev-sergey/edu-modules?logo=git&logoColor=white&color=F05032" alt="Top language">
+  <img src="https://img.shields.io/github/repo-size/talaev-sergey/edu-modules" alt="Repo size">
+</p>
+
+
 ### 1. Клонировать репозиторий и перейти в папку
 
-HTTPS:
-
 ```bash
-git clone https://github.com/talaev-sergey/edu-modules.git
+git clone git@github.com:talaev-sergey/edu-modules.git   # или https://github.com/talaev-sergey/edu-modules.git
 cd edu-modules
 ```
 
-SSH:
+### 2. Создать ветку модуля
+
+Имя — английский kebab-case с префиксом `module/` (например `module/python-basics`).
 
 ```bash
-git clone git@github.com:talaev-sergey/edu-modules.git
-cd edu-modules
+git switch -c module/python-basics
 ```
 
-### 2. Создать ветку модуля и перейти в неё
+### 3. Переименовать шаблон в название модуля
 
-Имя — на английском, kebab-case, префикс `module/` (например `module/python-basics`).
+Папку `module-template` переименуйте в имя модуля:
 
 ```bash
-git checkout master
-git pull origin master
-git checkout -b module/python-basic
+mv module-template python-basics
 ```
 
-### 3. Создать папку модуля из шаблона
+### 4. Открыть в Codex и начать работу
 
-Копируем папку `module-template` в новую папку с именем модуля.
+Откройте папку `python-basics` в Codex (File → Open Folder) — скиллы подключатся сами.
 
-Windows (PowerShell):
-
-```powershell
-Copy-Item -Recurse module-template python-basics
-```
-
-### 4. Перейти в папку и подключить Codex
-
-```bash
-cd python-basics
-```
-
-Откройте папку `python-basics` в Codex (File → Open Folder). Скиллы подключатся сами.
-
-### 5. Написать методичку
-
-Создайте файл урока в `content/` (`.md`, `.docx` или `.txt`), имя с номером: `lesson_01.md`.
-
-- **Вручную:** пишите содержание урока в этом файле.
-- **Через агента:** заполните `content/strategy.md` и напишите в Codex
-  `напиши черновик урока 1` — `it-metodist` создаст черновик.
-
-### 6. Собрать урок
-
-В Codex: `верстай урок 1` — `mkdocs-programmer` соберёт страницу сайта.
-Проверить: `запусти сайт` → `останови сайт`.
+- **Методичка:** создайте файл урока в `content/` с номером (`lesson_01.md`, `.docx` или `.txt`).
+  Вручную — пишите содержание сами; через агента — заполните `content/strategy.md`
+  и напишите `напиши черновик урока 1` (`it-metodist`).
+- **Вёрстка:** `верстай урок 1` (`mkdocs-programmer`). Проверка: `запусти сайт` → `останови сайт`.
