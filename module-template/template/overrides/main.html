@@ -17,6 +17,13 @@
         const clone = block.cloneNode(true);
         clone.querySelector('.admonition-title')?.remove();
 
+        // Absolutise image paths: the slide HTML is rendered inside
+        // assets/presentation.html, which sits at a different directory
+        // depth, so relative src like "../../assets/..." would break.
+        clone.querySelectorAll('img').forEach(img => {
+          img.setAttribute('src', img.src);
+        });
+
         return {
           title,
           html: '<h2>' + title + '</h2>' + clone.innerHTML
