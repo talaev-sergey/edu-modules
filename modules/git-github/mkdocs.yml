@@ -1,0 +1,16 @@
+INHERIT: ../../mkdocs.base.yml
+
+# ── Только то, что уникально для модуля ──
+site_name: "От Git до Github"
+site_url: https://talaev-sergey.github.io/mkdocs-test/
+
+nav:
+  - Главная: index.md
+  - Подготовка к модулю: preparation.md
+  - Уроки:
+      # Замените образец реальными уроками: "- N урок: lessons/lesson_NN.md"
+      - 1 урок: lessons/lesson_01.md
+      - Шаблон урока (образец): lessons/lesson_template.md
+  - Домашняя работа: homework.md
+  - Контрольная работа: test.md
+  - Материалы урока: materials.md

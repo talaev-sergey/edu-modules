@@ -1,0 +1,41 @@
+# Общий базовый конфиг для всех модулей.
+# Подключается из modules/<name>/mkdocs.yml через `INHERIT: ../../mkdocs.base.yml`.
+# Относительные пути (custom_dir, hooks) резолвятся MkDocs относительно
+# дочернего mkdocs.yml, поэтому ../../ всегда указывает в корень репозитория.
+# В модуле задаётся только: site_name, site_url, nav.
+
+theme:
+  name: material
+  custom_dir: ../../theme
+  palette:
+    scheme: slate
+    primary: indigo
+    accent: indigo
+  language: ru
+  font:
+    text: Rubik
+  features:
+    - navigation.top
+    - navigation.tabs
+    - content.code.copy
+    - search.highlight
+    - toc.follow
+
+plugins:
+  - search
+  - meta
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+hooks:
+  - ../../theme/hooks.py
+
+extra_css:
+  - stylesheets/extra.css

@@ -1,0 +1,15 @@
+INHERIT: ../../mkdocs.base.yml
+
+# ── Заменить под свой модуль ──
+site_name: "[Название модуля]"
+site_url: https://talaev-sergey.github.io/mkdocs-test/
+
+nav:
+  - Главная: index.md
+  - Подготовка к модулю: preparation.md
+  - Уроки:
+      # Замените образец реальными уроками: "- N урок: lessons/lesson_NN.md"
+      - Шаблон урока (образец): lessons/lesson_template.md
+  - Домашняя работа: homework.md
+  - Контрольная работа: test.md
+  - Материалы урока: materials.md

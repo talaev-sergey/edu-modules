@@ -1,6 +1,0 @@
-# Окружение сайта методичек (MkDocs Material).
-# Пересоздать venv: python -m venv env && env/bin/pip install -r requirements.txt
-# Прямые зависимости; остальное (pymdown-extensions и пр.) подтянется автоматически.
-
-mkdocs==1.6.1
-mkdocs-material==9.7.6
