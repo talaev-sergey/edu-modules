@@ -128,6 +128,32 @@
                 height: auto;
                 object-fit: contain;
                 border-radius: 0.5rem;
+                cursor: zoom-in;
+            }
+
+            /* ── Лайтбокс: крупный просмотр картинки по клику ── */
+            #img-lightbox {
+                position: fixed;
+                inset: 0;
+                z-index: 50;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                padding: 2rem;
+                background: rgba(0, 0, 0, 0.92);
+                cursor: zoom-out;
+            }
+            #img-lightbox.open {
+                display: flex;
+            }
+            #img-lightbox img {
+                max-width: 95vw;
+                max-height: 95vh;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+                border-radius: 0.5rem;
+                box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
             }
             #slide-content ul,
             #slide-content ol {
@@ -263,6 +289,8 @@
 
         <p id="hint">← → для навигации · Esc для закрытия</p>
 
+        <div id="img-lightbox"><img alt="" /></div>
+
         <script>
             let slides = [];
             let current = 0;
@@ -289,7 +317,37 @@
                 if (next >= 0 && next < slides.length) showSlide(next);
             }
 
+            // Лайтбокс: крупный просмотр картинки по клику
+            const lightbox = document.getElementById("img-lightbox");
+            const lightboxImg = lightbox.querySelector("img");
+            const lightboxOpen = () => lightbox.classList.contains("open");
+
+            function openLightbox(src) {
+                lightboxImg.src = src;
+                lightbox.classList.add("open");
+            }
+            function closeLightbox() {
+                lightbox.classList.remove("open");
+                lightboxImg.removeAttribute("src");
+            }
+            // Делегирование: контент слайда перерисовывается на каждом шаге
+            document
+                .getElementById("slide-content")
+                .addEventListener("click", (e) => {
+                    const img = e.target.closest("img");
+                    if (img) openLightbox(img.src);
+                });
+            lightbox.addEventListener("click", closeLightbox);
+
             document.addEventListener("keydown", (e) => {
+                // Пока открыт зум — не листаем слайды; Esc закрывает только зум
+                if (lightboxOpen()) {
+                    if (e.key === "Escape") {
+                        e.stopPropagation();
+                        closeLightbox();
+                    }
+                    return;
+                }
                 if (e.key === "ArrowRight" || e.key === "ArrowDown")
                     navigate(1);
                 if (e.key === "ArrowLeft" || e.key === "ArrowUp") navigate(-1);
@@ -302,6 +360,7 @@
                 touchStartX = e.touches[0].clientX;
             });
             document.addEventListener("touchend", (e) => {
+                if (lightboxOpen()) return;
                 const dx = e.changedTouches[0].clientX - touchStartX;
                 if (Math.abs(dx) > 50) navigate(dx < 0 ? 1 : -1);
             });
