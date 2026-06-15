@@ -8,3 +8,4 @@
 | 2026-06-14 | Verified lesson 1 — Что такое контроль версий. Установка Git и первая настройка (page already built & registered; HTTP 200, render OK) | docs/lessons/lesson_01.md, mkdocs.yml |
 | 2026-06-14 | Rebuilt lesson 1 strictly from content/lesson_01.docx (git -v / git config -l, 4-step solo task, тьютор, no screenshot TODOs / core.editor extras) | docs/lessons/lesson_01.md |
 | 2026-06-14 | Extracted 5 embedded images from lesson_01.docx and placed them in theory/blocks 1,3,4 | docs/lessons/lesson_01.md, docs/assets/images/lesson_01_*.png |
+| 2026-06-15 | Rebuilt lesson 1 from updated draft — fixed «прав тьютора» → «прав администратора» in Возможные сложности | docs/lessons/lesson_01.md |
