@@ -24,6 +24,7 @@ theme:
 plugins:
   - search
   - meta
+  - glightbox   # клик-зум картинок (в т.ч. внутри !!! slide)
 
 markdown_extensions:
   - admonition

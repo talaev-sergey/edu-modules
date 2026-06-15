@@ -17,6 +17,15 @@
         const clone = block.cloneNode(true);
         clone.querySelector('.admonition-title')?.remove();
 
+        // Unwrap glightbox links: the lightbox plugin wraps every image in
+        // <a class="glightbox" href="..."> for click-zoom on the lesson page.
+        // The presentation has no glightbox, and the relative href would 404,
+        // so keep the bare <img> and drop the link.
+        clone.querySelectorAll('a.glightbox').forEach(a => {
+          const img = a.querySelector('img');
+          if (img) a.replaceWith(img); else a.remove();
+        });
+
         // Absolutise image paths: the slide HTML is rendered inside
         // assets/presentation.html, which sits at a different directory
         // depth, so relative src like "../../assets/..." would break.
