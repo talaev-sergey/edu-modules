@@ -8,12 +8,16 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+# Базовый адрес GitHub Pages. site_url каждого модуля собирается отсюда + имя
+# папки и прокидывается в mkdocs через переменную SITE_URL (см. mkdocs.base.yml).
+BASE_URL="https://talaev-sergey.github.io/edu-modules"
+
 build_one() {
   local name="$1"
   local dir="modules/$name"
   [[ -f "$dir/mkdocs.yml" ]] || { echo "пропуск $name: нет mkdocs.yml"; return; }
   echo "→ Сборка $name"
-  ( cd "$dir" && mkdocs build -q -d "../../dist/$name" )
+  ( cd "$dir" && SITE_URL="$BASE_URL/$name/" mkdocs build -q -d "../../dist/$name" )
   ( cd dist && rm -f "$name.zip" && zip -rq "$name.zip" "$name" )
   echo "  dist/$name.zip"
 }
@@ -27,4 +31,6 @@ else
     [[ "$name" == _* ]] && continue   # _template — заготовка, не модуль
     build_one "$name"
   done
+  # Корневой лендинг со списком модулей + .nojekyll для GitHub Pages
+  python tools/gen_index.py
 fi

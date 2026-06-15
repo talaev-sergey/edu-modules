@@ -2,7 +2,11 @@
 # Подключается из modules/<name>/mkdocs.yml через `INHERIT: ../../mkdocs.base.yml`.
 # Относительные пути (custom_dir, hooks) резолвятся MkDocs относительно
 # дочернего mkdocs.yml, поэтому ../../ всегда указывает в корень репозитория.
-# В модуле задаётся только: site_name, site_url, nav.
+# В модуле задаётся только: site_name и nav.
+# site_url подставляется автоматически из переменной SITE_URL на этапе сборки
+# (см. build.sh): https://talaev-sergey.github.io/edu-modules/<name>/. Локально,
+# при `mkdocs serve` без этой переменной, остаётся пустым — это нормально.
+site_url: !ENV [SITE_URL, '']
 
 theme:
   name: material

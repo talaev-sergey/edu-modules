@@ -1,8 +1,7 @@
 INHERIT: ../../mkdocs.base.yml
 
 # ── Только то, что уникально для модуля ──
-site_name: "[Название модуля]"
-site_url: https://talaev-sergey.github.io/mkdocs-test/
+site_name: "Сам себе продюсер"
 
 nav:
   - Главная: index.md

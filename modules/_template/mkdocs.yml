@@ -1,8 +1,10 @@
 INHERIT: ../../mkdocs.base.yml
 
 # ── Заменить под свой модуль ──
+# Задайте только site_name. site_url НЕ указывайте — он подставляется
+# автоматически при сборке (build.sh → SITE_URL) из имени папки модуля:
+# https://talaev-sergey.github.io/edu-modules/<имя-папки>/
 site_name: "[Название модуля]"
-site_url: https://talaev-sergey.github.io/mkdocs-test/
 
 nav:
   - Главная: index.md

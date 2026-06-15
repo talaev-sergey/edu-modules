@@ -83,7 +83,7 @@ the theme and base config are shared one level up and apply to every module.
     static_assets/assets/presentation.html
 
 modules/<name>/              ← THIS module = the working copy (cwd)
-  mkdocs.yml                 ← INHERIT + site_name/site_url; only nav: is editable
+  mkdocs.yml                 ← INHERIT + site_name; only nav: is editable (site_url is auto)
   docs/
     index.md, preparation.md, homework.md, test.md, materials.md  ← DO NOT TOUCH
     assets/images/
@@ -315,21 +315,17 @@ python -m playwright install chromium
 ```
 
 Screenshot script (same on both platforms, adjust temp path).
-The base path is derived from `site_url` in `mkdocs.yml` — never hardcode it,
-since it changes per module:
+`site_url` is injected at build time (SITE_URL) and is absent from `mkdocs.yml`,
+so local `mkdocs serve` runs at the site root — the base path is just `/`:
 ```python
-import asyncio, re
-from urllib.parse import urlparse
+import asyncio
 from playwright.async_api import async_playwright
 
 SCREENSHOT = "/tmp/lesson_verify.png"          # Linux
 # SCREENSHOT = r"C:\Users\<user>\AppData\Local\Temp\lesson_verify.png"  # Windows
 SLUG = "lesson_01"                              # ← set to the slug just written
 
-# Derive base path from site_url (e.g. https://.../mkdocs-test/ → /mkdocs-test/)
-m = re.search(r"^\s*site_url:\s*(\S+)", open("mkdocs.yml", encoding="utf-8").read(), re.M)
-base = urlparse(m.group(1)).path if m else "/"   # mkdocs serve mirrors this path
-url = f"http://127.0.0.1:8000{base.rstrip('/')}/lessons/{SLUG}/"
+url = f"http://127.0.0.1:8000/lessons/{SLUG}/"
 
 async def main():
     async with async_playwright() as p:
