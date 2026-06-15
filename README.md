@@ -1,12 +1,16 @@
 # Как написать модуль
 
 <p align="center">
+  <a href="https://talaev-sergey.github.io/edu-modules/"><img src="https://img.shields.io/badge/Сайт-онлайн-2ea44f?logo=github&logoColor=white" alt="Live site"></a>
+  <a href="https://github.com/talaev-sergey/edu-modules/actions/workflows/deploy.yml"><img src="https://github.com/talaev-sergey/edu-modules/actions/workflows/deploy.yml/badge.svg" alt="Deploy"></a>
   <a href="https://squidfunk.github.io/mkdocs-material/"><img src="https://img.shields.io/badge/Material_for_MkDocs-526CFE?logo=materialformkdocs&logoColor=white" alt="Material for MkDocs"></a>
   <img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white" alt="Python">
   <a href="https://github.com/talaev-sergey/edu-modules/commits/master"><img src="https://img.shields.io/github/last-commit/talaev-sergey/edu-modules" alt="Last commit"></a>
   <img src="https://img.shields.io/github/languages/top/talaev-sergey/edu-modules?logo=git&logoColor=white&color=F05032" alt="Top language">
   <img src="https://img.shields.io/github/repo-size/talaev-sergey/edu-modules" alt="Repo size">
 </p>
+
+<p align="center"><b>🌐 Сайт модулей: <a href="https://talaev-sergey.github.io/edu-modules/">talaev-sergey.github.io/edu-modules</a></b></p>
 
 
 Все модули живут в одном репозитории как папки в `modules/`. Общая тема, стили
