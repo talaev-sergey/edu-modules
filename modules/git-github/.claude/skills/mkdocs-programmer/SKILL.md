@@ -196,6 +196,26 @@ Copy images if present:
 **Linux:** `cp -r content/images/. docs/assets/images/`  
 **Windows:** `Copy-Item -Recurse content\images\* docs\assets\images\`
 
+**Convert PNG → WebP and delete the originals.** Do this right after copying,
+before resolving screenshot markers in Step 2, so every link points at a `.webp`
+file. Uses ImageMagick (`magick`); lossy quality 85, compression method 6. Leave
+only the `.webp` files in `docs/assets/images/` (drop the source `.png`).
+
+**Linux:**
+```bash
+for f in docs/assets/images/*.png; do
+  [ -e "$f" ] || continue
+  magick "$f" -quality 85 -define webp:method=6 "${f%.png}.webp" && rm "$f"
+done
+```
+**Windows:**
+```powershell
+Get-ChildItem docs\assets\images\*.png | ForEach-Object {
+  magick $_.FullName -quality 85 -define webp:method=6 ($_.FullName -replace '\.png$','.webp')
+  if ($?) { Remove-Item $_.FullName }
+}
+```
+
 **Missing field policy:**
 
 | Field | Required? | If missing |
@@ -242,8 +262,8 @@ here — the canonical template stays the source of truth for the key set.
 
 **Screenshot markers** (`[СКРИНШОТ: описание]`, placed by `it-metodist`):
 Each marker = one image insertion point. Resolve each one:
-- Image exists in `docs/assets/images/` (copied in Step 1) → replace the marker with
-  `![описание](../assets/images/<file>.png)`. Match by lesson number / order of markers.
+- Image exists in `docs/assets/images/` (copied & converted to WebP in Step 1) → replace the marker with
+  `![описание](../assets/images/<file>.webp)`. Match by lesson number / order of markers.
 - No matching image yet → keep the marker text as a visible HTML comment so nothing
   silently disappears: `<!-- TODO СКРИНШОТ: описание -->`, and list it in the report.
 Never leave a raw `[СКРИНШОТ: …]` marker in the published page.
