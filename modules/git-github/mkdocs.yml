@@ -10,6 +10,7 @@ nav:
       # Замените образец реальными уроками: "- N урок: lessons/lesson_NN.md"
       - 1 урок: lessons/lesson_01.md
       - 2 урок: lessons/lesson_02.md
+      - 3 урок: lessons/lesson_03.md
       - Шаблон урока (образец): lessons/lesson_template.md
   - Домашняя работа: homework.md
   - Контрольная работа: test.md

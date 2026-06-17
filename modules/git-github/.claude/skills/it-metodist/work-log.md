@@ -12,3 +12,4 @@
 | 2026-06-14 | Lesson 1 — added name-origin note in "Краткая история" section (kid-friendly, no profanity) | content/lesson_01.docx |
 | 2026-06-14 | Lesson 1 — added VS Code installation to home task (item 4); kept screenshots intact | content/lesson_01.docx |
 | 2026-06-15 | Lesson 2 draft — Первый репозиторий: init, add, commit, status, log | content/lesson_02.docx |
+| 2026-06-17 | Lesson 3 draft — История изменений: просмотр, отмена, возврат к версии (Mode B; short flags where available) | content/lesson_03.docx |
