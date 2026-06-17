@@ -105,7 +105,7 @@ age: 12–14 лет
     6. Щёлкните правой кнопкой мыши по пустому месту внутри папки. В Windows 11 сначала нажмите «Показать дополнительные параметры».
     7. В меню выберите пункт «Open Git Bash here» — откроется чёрное окно терминала.
 
-    ![Контекстное меню Windows с выделенным пунктом «Open Git Bash here»](../assets/images/lesson_01_gitbash_open.png)
+    ![Контекстное меню Windows с выделенным пунктом «Open Git Bash here»](../assets/images/lesson_01_gitbash_open.webp)
 
 !!! note "Ожидаемый результат"
     Открыт Git Bash, и в его строке виден путь, заканчивающийся на `/my-first-repo`.
@@ -117,7 +117,7 @@ age: 12–14 лет
     2. Прочитайте сообщение: Git напишет, что создан пустой репозиторий (`Initialized empty Git repository`).
     3. Наберите команду `git status` и нажмите Enter, чтобы проверить состояние нового репозитория.
 
-    ![Git Bash: git init создал репозиторий, git status показывает «No commits yet»](../assets/images/lesson_02_git_init.png)
+    ![Git Bash: git init создал репозиторий, git status показывает «No commits yet»](../assets/images/lesson_02_git_init.webp)
 
 !!! note "Ожидаемый результат"
     Git сообщил, что репозиторий создан, а `git status` показывает, что коммитов пока нет (`No commits yet`).
@@ -132,7 +132,7 @@ age: 12–14 лет
     5. Вернитесь в Git Bash, наберите команду `git status` и нажмите Enter.
     6. Найдите в выводе имя файла `about.txt` в разделе Untracked files — это значит, что Git увидел новый файл, но пока его не сохраняет.
 
-    ![Git Bash: git status показывает about.txt в разделе Untracked files](../assets/images/lesson_02_status_untracked.png)
+    ![Git Bash: git status показывает about.txt в разделе Untracked files](../assets/images/lesson_02_status_untracked.webp)
 
 !!! note "Ожидаемый результат"
     `git status` показывает `about.txt` как неотслеживаемый файл (Untracked files).
@@ -144,7 +144,7 @@ age: 12–14 лет
     2. Наберите команду `git status` и нажмите Enter ещё раз.
     3. Сравните вывод с прошлым разом: теперь файл `about.txt` находится в разделе Changes to be committed — он готов к коммиту.
 
-    ![Git Bash: после git add файл about.txt в разделе Changes to be committed](../assets/images/lesson_02_add_staged.png)
+    ![Git Bash: после git add файл about.txt в разделе Changes to be committed](../assets/images/lesson_02_add_staged.webp)
 
 !!! note "Ожидаемый результат"
     Файл `about.txt` перешёл в раздел Changes to be committed — он в индексе и готов к сохранению.
@@ -160,7 +160,7 @@ age: 12–14 лет
     3. Наберите команду `git status` — теперь Git сообщает, что сохранять нечего (`nothing to commit, working tree clean`).
     4. Наберите команду `git log` и нажмите Enter — вы увидите свой первый коммит: его подпись, ваше имя, дату и описание.
 
-    ![Git Bash: git commit создал коммит, git log показывает его с автором и описанием](../assets/images/lesson_02_commit_log.png)
+    ![Git Bash: git commit создал коммит, git log показывает его с автором и описанием](../assets/images/lesson_02_commit_log.webp)
 
 !!! note "Ожидаемый результат"
     Сделан первый коммит; `git log` показывает его с именем автора, датой и описанием.
@@ -177,7 +177,7 @@ age: 12–14 лет
     4. Командой `git commit -m "Дописал вторую строку"` сделайте второй коммит.
     5. Командой `git log` посмотрите историю — теперь в ней должно быть два коммита.
 
-    ![Git Bash: после второго коммита git log показывает два коммита](../assets/images/lesson_02_second_commit.png)
+    ![Git Bash: после второго коммита git log показывает два коммита](../assets/images/lesson_02_second_commit.webp)
 
 !!! note "Ожидаемый результат"
     В репозитории два коммита; ученик прошёл цикл `add` → `commit` самостоятельно.
@@ -224,7 +224,7 @@ age: 12–14 лет
     5. Допиши в файл ещё одну строку, затем сделай второй коммит.
     6. Посмотри историю и убедись, что в ней два коммита.
 
-    ![Git Bash: git log в репозитории my-notes показывает два коммита](../assets/images/lesson_02_solo.png)
+    ![Git Bash: git log в репозитории my-notes показывает два коммита](../assets/images/lesson_02_solo.webp)
 
 #### Критерии оценки
 
