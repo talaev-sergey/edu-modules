@@ -11,3 +11,4 @@
 | 2026-06-15 | Rebuilt lesson 1 from updated draft — fixed «прав тьютора» → «прав администратора» in Возможные сложности | docs/lessons/lesson_01.md |
 | 2026-06-15 | Built lesson 2 — Первый репозиторий: init, add, commit, status, log (6 embedded images extracted; reused lesson_01_gitbash_open.png for «Open Git Bash here» marker) | docs/lessons/lesson_02.md, docs/assets/images/lesson_02_*.png, mkdocs.yml |
 | 2026-06-17 | Built lesson 3 — История изменений: просмотр, отмена, возврат к версии (4 embedded images extracted → lesson_03_*.webp; mapped to blocks 1,2,5,6) | docs/lessons/lesson_03.md, docs/assets/images/lesson_03_*.webp, mkdocs.yml |
+| 2026-06-18 | Built lesson 4 — Ветки: создание, переключение, слияние (5 content/*.png recoded → lesson_04_*.webp, originals deleted; mapped to blocks 1,3,4,5) | docs/lessons/lesson_04.md, docs/assets/images/lesson_04_*.webp, mkdocs.yml |
