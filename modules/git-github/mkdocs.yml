@@ -12,6 +12,7 @@ nav:
       - 2 урок: lessons/lesson_02.md
       - 3 урок: lessons/lesson_03.md
       - 4 урок: lessons/lesson_04.md
+      - 5 урок: lessons/lesson_05.md
       - Шаблон урока (образец): lessons/lesson_template.md
   - Домашняя работа: homework.md
   - Контрольная работа: test.md
