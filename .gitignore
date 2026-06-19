@@ -5,3 +5,5 @@ site/
 dist/
 __pycache__/
 **/settings.local.json
+.vs/
+**/.~lock.*#
