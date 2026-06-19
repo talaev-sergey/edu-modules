@@ -14,3 +14,4 @@
 | 2026-06-15 | Lesson 2 draft — Первый репозиторий: init, add, commit, status, log | content/lesson_02.docx |
 | 2026-06-17 | Lesson 3 draft — История изменений: просмотр, отмена, возврат к версии (Mode B; short flags where available) | content/lesson_03.docx |
 | 2026-06-18 | Lesson 4 draft — Ветки: создание, переключение, слияние (Mode B; Markdown per user request, continues my-first-app project) | content/lesson_04.md |
+| 2026-06-19 | Lesson 5 draft — GitHub: аккаунт, удалённый репозиторий, push и pull (Mode B; Markdown per user request, continues my-first-app project) | content/lesson_05.md |
