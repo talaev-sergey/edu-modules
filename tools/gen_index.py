@@ -18,6 +18,14 @@ ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
 MODULES = ROOT / "modules"
 
+# Капсулы карточек (автор + статус) — заполняются вручную по slug модуля.
+# status: "готов" → зелёная капсула, любое другое значение → «в работе» (янтарная).
+# Модуль без записи здесь выводится без капсул.
+META: dict[str, dict[str, str]] = {
+    "git-github": {"author": "Сергей", "status": "в работе"},
+    "producere": {"author": "Олеся", "status": "в работе"},
+}
+
 
 def site_name(name: str) -> str:
     """site_name из mkdocs.yml модуля; имя папки как запасной вариант."""
@@ -85,7 +93,8 @@ PAGE = """<!DOCTYPE html>
     max-width: 900px;
   }}
   a.card {{
-    display: block;
+    display: flex;
+    flex-direction: column;
     padding: 1.5rem 1.5rem 1.6rem;
     background: var(--card);
     border: 1px solid var(--border);
@@ -101,6 +110,39 @@ PAGE = """<!DOCTYPE html>
   }}
   a.card .title {{ font-size: 1.25rem; font-weight: 500; margin: 0; }}
   a.card .go {{ color: var(--accent); font-size: .9rem; margin-top: .75rem; display: block; }}
+  a.card .meta {{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: .4rem;
+    margin-top: auto;
+    padding-top: 1.25rem;
+  }}
+  .capsule {{
+    font-size: .72rem;
+    line-height: 1;
+    padding: .35rem .65rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: #1e1e1e;
+    color: var(--fg);
+    white-space: nowrap;
+  }}
+  .capsule.author {{
+    color: hsl(205, 70%, 80%);
+    border-color: hsla(205, 55%, 65%, .45);
+    background: hsla(205, 60%, 65%, .10);
+  }}
+  .capsule.status-wip {{
+    color: hsl(35, 80%, 66%);
+    border-color: hsla(35, 55%, 45%, .55);
+    background: hsla(35, 60%, 50%, .12);
+  }}
+  .capsule.status-done {{
+    color: var(--accent);
+    border-color: hsla(120, 35%, 45%, .55);
+    background: hsla(120, 40%, 50%, .12);
+  }}
   .empty {{ color: var(--muted); }}
   footer {{ margin-top: auto; padding-top: 3rem; color: var(--muted); font-size: .85rem; }}
 </style>
@@ -119,14 +161,38 @@ PAGE = """<!DOCTYPE html>
 CARD = """    <a class="card" href="./{slug}/">
       <span class="title">{title}</span>
       <span class="go">Открыть →</span>
-    </a>"""
+{meta}    </a>"""
+
+CAPSULE = '        <span class="capsule {cls}">{text}</span>\n'
+
+
+def capsules(slug: str) -> str:
+    """Блок капсул (автор + статус) для карточки; пусто, если нет записи в META."""
+    info = META.get(slug)
+    if not info:
+        return ""
+    rows = ""
+    author = info.get("author")
+    if author:
+        rows += CAPSULE.format(cls="author", text=html.escape(author))
+    status = info.get("status")
+    if status:
+        cls = "status-done" if status.strip().lower() == "готов" else "status-wip"
+        rows += CAPSULE.format(cls=cls, text=html.escape(status))
+    if not rows:
+        return ""
+    return f'      <span class="meta">\n{rows}      </span>\n'
 
 
 def main() -> None:
     modules = discover()
     if modules:
         cards = "\n".join(
-            CARD.format(slug=html.escape(slug), title=html.escape(title))
+            CARD.format(
+                slug=html.escape(slug),
+                title=html.escape(title),
+                meta=capsules(slug),
+            )
             for slug, title in modules
         )
     else:
