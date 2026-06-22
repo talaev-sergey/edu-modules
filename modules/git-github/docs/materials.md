@@ -1,11 +1,92 @@
 # Материалы урока
 
+## Тренажёры
+
 <div class="presentations">
 
-<!-- ─── Презентации ──────────────────────────────────────────────────────────
-     Скопируй блок для каждой презентации. Файл положи в docs/assets/presentations/ -->
+<div class="presentation-card">
+  <div class="presentation-preview">
+    <span class="presentation-icon">&#127918;</span>
+    <span class="presentation-name">Урок 2 — Жизненный цикл файла: init, add, commit</span>
+  </div>
+  <a href="../interactives/trainer-1.html" target="_blank" class="presentation-btn">Открыть</a>
+</div>
 
-<!--
+<div class="presentation-card">
+  <div class="presentation-preview">
+    <span class="presentation-icon">&#127918;</span>
+    <span class="presentation-name">Урок 4 — Ветки: branch, switch, merge</span>
+  </div>
+  <a href="../interactives/trainer-4.html" target="_blank" class="presentation-btn">Открыть</a>
+</div>
+
+</div>
+
+## Квизы по урокам
+
+<div class="presentations">
+
+<div class="presentation-card">
+  <div class="presentation-preview">
+    <span class="presentation-icon">&#10067;</span>
+    <span class="presentation-name">Урок 1 — Контроль версий и настройка</span>
+  </div>
+  <a href="../interactives/quiz-1.html" target="_blank" class="presentation-btn">Открыть</a>
+</div>
+
+<div class="presentation-card">
+  <div class="presentation-preview">
+    <span class="presentation-icon">&#10067;</span>
+    <span class="presentation-name">Урок 3 — История, отмена, возврат к версии</span>
+  </div>
+  <a href="../interactives/quiz-3.html" target="_blank" class="presentation-btn">Открыть</a>
+</div>
+
+<div class="presentation-card">
+  <div class="presentation-preview">
+    <span class="presentation-icon">&#10067;</span>
+    <span class="presentation-name">Урок 6 — Клонирование и работа с чужими проектами</span>
+  </div>
+  <a href="../interactives/quiz-6.html" target="_blank" class="presentation-btn">Открыть</a>
+</div>
+
+<div class="presentation-card">
+  <div class="presentation-preview">
+    <span class="presentation-icon">&#10067;</span>
+    <span class="presentation-name">Урок 7 — Командная работа: Pull Request, Issues, обзор кода</span>
+  </div>
+  <a href="../interactives/quiz-7.html" target="_blank" class="presentation-btn">Открыть</a>
+</div>
+
+<div class="presentation-card">
+  <div class="presentation-preview">
+    <span class="presentation-icon">&#10067;</span>
+    <span class="presentation-name">Урок 8 — Итоговый практикум: общий сайт класса на GitHub Pages</span>
+  </div>
+  <a href="../interactives/quiz-8.html" target="_blank" class="presentation-btn">Открыть</a>
+</div>
+
+</div>
+
+## Проект из 8 урока
+
+<div class="presentations">
+
+<div class="presentation-card">
+  <div class="presentation-preview">
+    <span class="presentation-icon">&#128190;</span>
+    <span class="presentation-name">Шаблон сайта класса (стартовый код)</span>
+  </div>
+  <a href="../assets/projects/class-site.zip" download class="presentation-btn">Скачать</a>
+</div>
+
+</div>
+
+<!-- ─── Шаблоны для ручного заполнения (куратор) ──────────────────────────────
+     Презентации → docs/assets/presentations/, ПО → docs/assets/software/,
+     прочие материалы → docs/assets/extra/. Раскомментируй и заполни блок.
+
+<div class="presentations">
 <div class="presentation-card">
   <div class="presentation-preview">
     <span class="presentation-icon">&#128396;</span>
@@ -13,48 +94,5 @@
   </div>
   <a href="../assets/presentations/Урок%20N.pptx" download class="presentation-btn">&#8595; Скачать</a>
 </div>
--->
-
-<!-- ─── Код проекта ──────────────────────────────────────────────────────────
-     Архив или ссылка на репозиторий с кодом, который используется на уроках.
-     Файл положи в docs/assets/code/ -->
-
-<!--
-<div class="presentation-card">
-  <div class="presentation-preview">
-    <span class="presentation-icon">&#128190;</span>
-    <span class="presentation-name">Код проекта.zip</span>
-  </div>
-  <a href="../assets/code/project.zip" download class="presentation-btn">&#8595; Скачать</a>
 </div>
 -->
-
-<!-- ─── Программы для установки ─────────────────────────────────────────────
-     Дистрибутивы или ссылки на скачивание ПО, нужного на модуле.
-     Файл положи в docs/assets/software/ или укажи внешнюю ссылку без download. -->
-
-<!--
-<div class="presentation-card">
-  <div class="presentation-preview">
-    <span class="presentation-icon">&#9881;</span>
-    <span class="presentation-name">Название программы</span>
-  </div>
-  <a href="https://example.com/download" class="presentation-btn">&#8595; Скачать</a>
-</div>
--->
-
-<!-- ─── Прочие материалы ─────────────────────────────────────────────────────
-     Шпаргалки, задания, дополнительные файлы.
-     Файл положи в docs/assets/extra/ -->
-
-<!--
-<div class="presentation-card">
-  <div class="presentation-preview">
-    <span class="presentation-icon">&#128203;</span>
-    <span class="presentation-name">Шпаргалка.pdf</span>
-  </div>
-  <a href="../assets/extra/cheatsheet.pdf" download class="presentation-btn">&#8595; Скачать</a>
-</div>
--->
-
-</div>

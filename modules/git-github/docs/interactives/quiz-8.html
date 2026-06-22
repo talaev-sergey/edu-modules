@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<!--
+  КВИЗ — 8 : Итоговый практикум — общий сайт класса на GitHub Pages (урок 8)
+  Самодостаточный одиночный .html без внешних зависимостей.
+  Палитра и шрифты — как в interactives/trainer-1.html (Catppuccin Latte).
+
+  Формат: вертикальный список карточек-вопросов с вариантами ответа.
+  Проверка: верный ответ подсвечивается зелёным; при ошибке выбранный
+  вариант краснеет, правильный подсвечивается зелёным, а внизу карточки
+  появляется блок с правильным ответом. Справа — итоговая оценка.
+-->
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git: квиз по уроку 8 — итоговый практикум: общий сайт класса на GitHub Pages</title>
+<style>
+  /* Палитра Catppuccin Latte (светлая) */
+  :root {
+    --ctp-base:     #eff1f5;
+    --ctp-mantle:   #e6e9ef;
+    --ctp-crust:    #dce0e8;
+    --ctp-surface0: #ccd0da;
+    --ctp-surface1: #bcc0cc;
+
+    --c-bg:        var(--ctp-crust);
+    --c-panel:     var(--ctp-base);
+    --c-card:      var(--ctp-mantle);
+    --c-border:    var(--ctp-surface0);
+    --c-fg:        #4c4f69;   /* Text */
+    --c-muted:     #6c6f85;   /* Subtext0 */
+    --c-blue:      #1e66f5;   /* Blue */
+    --c-green:     #40a02b;   /* Green */
+    --c-orange:    #fe640b;   /* Peach */
+    --c-red:       #d20f39;   /* Red */
+    --c-on-accent: #eff1f5;
+    --radius:      14px;
+    --mono:        "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+    --sans:        "Rubik", system-ui, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: radial-gradient(1200px 600px at 70% -10%, var(--ctp-mantle) 0%, var(--c-bg) 55%);
+    color: var(--c-fg);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    padding: 24px 16px 48px;
+  }
+
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  .layout { display: grid; grid-template-columns: 1fr 256px; gap: 20px; align-items: start; }
+
+  .head { margin-bottom: 20px; }
+  .head__title { margin: 0 0 6px; font-size: 1.5rem; font-weight: 600; color: var(--c-blue); display: flex; align-items: center; gap: .35em; }
+  .head__title .git-logo { width: 1.3em; height: 1.3em; vertical-align: -0.28em; }
+  .head__sub { margin: 0; color: var(--c-muted); font-size: .92rem; }
+
+  /* Прогресс */
+  .score {
+    position: sticky; top: 12px; z-index: 5;
+    display: flex; align-items: center; gap: 12px;
+    background: var(--c-panel); border: 1px solid var(--c-border);
+    border-radius: 999px; padding: 8px 16px; margin-bottom: 22px;
+    box-shadow: 0 4px 14px rgba(76,79,105,.08);
+  }
+  .score__label { font-size: .85rem; color: var(--c-muted); }
+  .score__bar { flex: 1; height: 8px; border-radius: 999px; background: var(--ctp-surface0); overflow: hidden; }
+  .score__fill { height: 100%; width: 0; background: var(--c-green); transition: width .3s ease; }
+  .score__num { font-family: var(--mono); font-size: .85rem; font-weight: 600; color: var(--c-fg); white-space: nowrap; }
+
+  /* Карточка вопроса */
+  .q {
+    background: var(--c-panel); border: 1px solid var(--c-border);
+    border-radius: var(--radius); padding: 18px 18px 16px; margin-bottom: 16px;
+  }
+  .q__num {
+    font-family: var(--mono); font-size: .72rem; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--c-muted); margin-bottom: 6px;
+  }
+  .q__text { font-size: 1.05rem; font-weight: 500; line-height: 1.45; margin-bottom: 14px; }
+  .q__text code {
+    font-family: var(--mono); font-size: .92em;
+    background: var(--ctp-surface0); padding: 1px 6px; border-radius: 6px;
+  }
+
+  .opts { display: flex; flex-direction: column; gap: 9px; }
+  .opt {
+    appearance: none; text-align: left; cursor: pointer; width: 100%;
+    border: 1px solid var(--c-border); background: var(--c-card); color: var(--c-fg);
+    font-family: var(--sans); font-size: .95rem; line-height: 1.4;
+    padding: 11px 14px; border-radius: 10px;
+    display: flex; align-items: center; gap: 10px;
+    transition: background .15s, border-color .15s, transform .08s;
+  }
+  .opt:hover:not(:disabled) { background: var(--ctp-surface0); border-color: var(--ctp-surface1); }
+  .opt:active:not(:disabled) { transform: translateY(1px); }
+  .opt:disabled { cursor: default; }
+  .opt code { font-family: var(--mono); font-size: .9em; background: var(--ctp-surface0); padding: 1px 6px; border-radius: 6px; }
+  .opt__mark { margin-left: auto; font-family: var(--mono); font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; line-height: 1; opacity: 0; }
+
+  .opt--correct {
+    background: color-mix(in srgb, var(--c-green) 14%, var(--c-card));
+    border-color: var(--c-green); color: var(--c-fg); font-weight: 500;
+  }
+  .opt--correct code { background: color-mix(in srgb, var(--c-green) 22%, var(--ctp-surface0)); }
+  .opt--correct .opt__mark { opacity: 1; color: var(--c-green); }
+  .opt--wrong {
+    background: color-mix(in srgb, var(--c-red) 12%, var(--c-card));
+    border-color: var(--c-red);
+  }
+  .opt--wrong code { background: color-mix(in srgb, var(--c-red) 18%, var(--ctp-surface0)); }
+  .opt--wrong .opt__mark { opacity: 1; color: var(--c-red); }
+
+  /* Блок с правильным ответом (показывается только при ошибке) */
+  .answer {
+    margin-top: 13px; border-radius: 10px; padding: 11px 13px;
+    background: color-mix(in srgb, var(--c-green) 10%, var(--ctp-base));
+    border: 1px solid color-mix(in srgb, var(--c-green) 40%, var(--c-border));
+    font-size: .9rem; line-height: 1.5;
+    display: none; animation: pop .22s ease;
+  }
+  .answer--show { display: block; }
+  .answer__title { font-weight: 600; color: var(--c-green); margin-bottom: 3px; }
+  .answer code { font-family: var(--mono); font-size: .9em; background: var(--ctp-surface0); padding: 1px 6px; border-radius: 6px; }
+  @keyframes pop { from { transform: translateY(-4px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  /* Блок итоговой оценки (правая колонка) */
+  .grade {
+    position: sticky; top: 74px;
+    background: var(--c-panel); border: 1px solid var(--c-border);
+    border-radius: var(--radius); padding: 18px 16px; text-align: center;
+  }
+  .grade__cap {
+    font-family: var(--mono); font-size: .72rem; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--c-muted); margin-bottom: 12px;
+  }
+  .grade__wait { color: var(--c-muted); font-size: .9rem; line-height: 1.5; }
+  .grade__result { display: none; }
+  .grade__result--show { display: block; animation: pop .25s ease; }
+  .grade__score { font-family: var(--mono); font-size: 2rem; font-weight: 700; color: var(--c-fg); }
+  .grade__score small { font-size: 1rem; color: var(--c-muted); font-weight: 500; }
+  .grade__mark {
+    margin: 12px 0 8px; font-size: 1.15rem; font-weight: 600;
+    padding: 8px 10px; border-radius: 10px;
+    background: color-mix(in srgb, var(--gc) 14%, var(--ctp-base));
+    border: 1px solid color-mix(in srgb, var(--gc) 45%, var(--c-border));
+    color: var(--gc);
+  }
+  .grade__note { font-size: .85rem; color: var(--c-muted); line-height: 1.5; }
+
+  ::-webkit-scrollbar { width: 9px; height: 9px; }
+  ::-webkit-scrollbar-thumb { background: var(--ctp-surface1); border-radius: 6px; }
+
+  @media (max-width: 720px) {
+    .layout { grid-template-columns: 1fr; }
+    .grade { position: static; order: -1; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="head">
+      <h1 class="head__title"><!-- Логотип Git © Jason Long, CC BY 3.0 --><svg class="git-logo" viewBox="0 0 78 78" aria-hidden="true"><path fill="#f03c2e" transform="translate(10 10) rotate(-45 29 29)" d="M5,58c-2.76142,0 -5,-2.23858 -5,-5v-48c0,-2.76142 2.23858,-5 5,-5h33v12.54404c-2.06553,0.94801 -3.5,3.03446 -3.5,5.45596c0,0.73514 0.13221,1.43941 0.37415,2.09031l-15.28384,15.28384c-0.6509,-0.24194 -1.35517,-0.37415 -2.09031,-0.37415c-3.31371,0 -6,2.68629 -6,6c0,3.31371 2.68629,6 6,6c3.31371,0 6,-2.68629 6,-6c0,-0.73514 -0.13221,-1.43941 -0.37415,-2.09031l14.87415,-14.87415l0,11.50851c-2.06553,0.94801 -3.5,3.03446 -3.5,5.45596c0,3.31371 2.68629,6 6,6c3.31371,0 6,-2.68629 6,-6c0,-2.42149 -1.43447,-4.50795 -3.5,-5.45596l0,-12.08808c2.06553,-0.94801 3.5,-3.03446 3.5,-5.45596c0,-2.42149 -1.43447,-4.50795 -3.5,-5.45596l0,-12.54404h10c2.76142,0 5,2.23858 5,5v48c0,2.76142 -2.23858,5 -5,5z"/></svg> Квиз — 8 : Итоговый практикум: общий сайт класса на GitHub Pages</h1>
+      <p class="head__sub">Выбери один вариант в каждом вопросе.</p>
+    </header>
+
+    <div class="score">
+      <span class="score__label">Верно:</span>
+      <div class="score__bar"><div class="score__fill" id="scoreFill"></div></div>
+      <span class="score__num" id="scoreNum">0 / 0</span>
+    </div>
+
+    <div class="layout">
+      <main id="quiz"></main>
+
+      <aside class="grade" id="grade">
+        <div class="grade__cap">Оценка за квиз</div>
+        <div class="grade__wait" id="gradeWait">Ответь на все вопросы, чтобы увидеть оценку.</div>
+        <div class="grade__result" id="gradeResult">
+          <div class="grade__score"><span id="gradeScore">0</span><small> / <span id="gradeTotal">0</span></small></div>
+          <div class="grade__mark" id="gradeMark"></div>
+          <div class="grade__note" id="gradeNote"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // Вопросы строго по темам урока 8. correct — индекс верного варианта.
+  // answer — пояснение, которое показывается под вопросом при ошибке.
+  const QUESTIONS = [
+    {
+      q: 'Что такое GitHub Pages?',
+      opts: [
+        'Программа для рисования сайтов на компьютере',
+        'Бесплатная публикация сайта прямо из репозитория на GitHub',
+        'Команда, которая удаляет страницы сайта',
+        'Платный хостинг, который нужно настраивать вручную',
+      ],
+      correct: 1,
+      answer: 'GitHub Pages бесплатно превращает файлы-страницы из репозитория в настоящий сайт с адресом в интернете.',
+    },
+    {
+      q: 'Какой файл становится главной страницей сайта?',
+      opts: [
+        '<code>main.py</code>',
+        '<code>README.md</code>',
+        '<code>index.html</code>',
+        '<code>style.css</code>',
+      ],
+      correct: 2,
+      answer: '<code>index.html</code> открывается по основному адресу сайта — это его главная страница.',
+    },
+    {
+      q: 'Почему на этом уроке каждый правит только свой файл в папке <code>pages</code>?',
+      opts: [
+        'Так быстрее печатать',
+        'Чтобы не возникало конфликтов и общий сайт не сломался',
+        'Это требование браузера',
+        'Чужие файлы вообще нельзя открыть',
+      ],
+      correct: 1,
+      answer: 'Если несколько человек правят один и тот же файл, возникают конфликты; правя только свой файл, мы их избегаем.',
+    },
+    {
+      q: 'Когда твоя страница появится на общем сайте?',
+      opts: [
+        'Сразу, как только ты сохранил файл в VS Code',
+        'После того как Pull Request вольют (merge) в ветку <code>main</code>',
+        'Никогда, сайт обновляет только преподаватель вручную',
+        'После перезагрузки компьютера',
+      ],
+      correct: 1,
+      answer: 'Страница публикуется, когда изменение из ветки попадает в <code>main</code> через merge — тогда GitHub Pages обновляет сайт.',
+    },
+  ];
+
+  const $ = id => document.getElementById(id);
+  const quizEl = $('quiz');
+  let answered = 0;   // на сколько вопросов уже ответили
+  let correct  = 0;   // сколько из них верно
+
+  // Шкала оценок по числу верных ответов (из 4), как в уроке.
+  const GRADES = [
+    { min: 4, mark: 'Отлично',           color: 'var(--c-green)', note: 'Темы урока усвоены — отличный результат.' },
+    { min: 3, mark: 'Хорошо',            color: 'var(--c-blue)',  note: 'Хороший результат, есть что повторить.' },
+    { min: 2, mark: 'Удовлетворительно', color: 'var(--c-orange)',note: 'Стоит ещё раз пройтись по конспекту урока.' },
+    { min: 0, mark: 'Требует доработки', color: 'var(--c-red)',   note: 'Перечитай материал урока и попробуй снова.' },
+  ];
+
+  function updateScore() {
+    $('scoreNum').textContent = `${correct} / ${QUESTIONS.length}`;
+    $('scoreFill').style.width = (correct / QUESTIONS.length * 100) + '%';
+
+    if (answered === QUESTIONS.length) showGrade();
+  }
+
+  function showGrade() {
+    const g = GRADES.find(x => correct >= x.min);
+    $('gradeWait').style.display = 'none';
+    $('gradeResult').classList.add('grade__result--show');
+    $('gradeScore').textContent = correct;
+    $('gradeTotal').textContent = QUESTIONS.length;
+    const mark = $('gradeMark');
+    mark.textContent = g.mark;
+    mark.style.setProperty('--gc', g.color);
+    $('gradeNote').textContent = g.note;
+  }
+
+  function build() {
+    quizEl.innerHTML = '';
+    answered = 0; correct = 0;
+    updateScore();
+
+    QUESTIONS.forEach((item, qi) => {
+      const card = document.createElement('section');
+      card.className = 'q';
+
+      const opts = item.opts.map((text, oi) =>
+        `<button class="opt" data-q="${qi}" data-o="${oi}">
+           <span>${text}</span><span class="opt__mark"></span>
+         </button>`).join('');
+
+      card.innerHTML = `
+        <div class="q__num">Вопрос ${qi + 1} из ${QUESTIONS.length}</div>
+        <div class="q__text">${item.q}</div>
+        <div class="opts">${opts}</div>
+        <div class="answer" id="ans-${qi}">
+          <div class="answer__title">Правильный ответ</div>
+          <div>${item.answer}</div>
+        </div>`;
+      quizEl.appendChild(card);
+    });
+  }
+
+  quizEl.addEventListener('click', e => {
+    const btn = e.target.closest('.opt');
+    if (!btn || btn.disabled) return;
+
+    const qi = +btn.dataset.q;
+    const oi = +btn.dataset.o;
+    const item = QUESTIONS[qi];
+
+    // блокируем все варианты этого вопроса
+    const card = btn.closest('.q');
+    card.querySelectorAll('.opt').forEach(b => {
+      b.disabled = true;
+      const o = +b.dataset.o;
+      if (o === item.correct) { b.classList.add('opt--correct'); b.querySelector('.opt__mark').textContent = 'верно'; }
+    });
+
+    answered++;
+    if (oi === item.correct) {
+      correct++;
+    } else {
+      btn.classList.add('opt--wrong');
+      btn.querySelector('.opt__mark').textContent = 'ваш ответ';
+      $(`ans-${qi}`).classList.add('answer--show');   // показываем правильный ответ
+    }
+    updateScore();
+  });
+
+  build();
+})();
+</script>
+</body>
+</html>
