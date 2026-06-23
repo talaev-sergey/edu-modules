@@ -199,7 +199,7 @@ age: 12–14 лет
 
 <div class="interactive-embed" markdown>
 <iframe src="../../interactives/quiz-6.html" title="Квиз 6: клонирование и работа с чужими проектами" loading="lazy"></iframe>
-[Открыть квиз на весь экран ↗](../../interactives/quiz-6.html){ target="_blank" }
+[Открыть квиз на весь экран ↗](../interactives/quiz-6.html){ target="_blank" }
 </div>
 
 #### Задание

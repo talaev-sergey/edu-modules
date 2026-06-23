@@ -274,7 +274,7 @@ age: 12–14 лет
 
 <div class="interactive-embed" markdown>
 <iframe src="../../interactives/quiz-7.html" title="Квиз 7: командная работа — Pull Request, Issues, обзор кода" loading="lazy"></iframe>
-[Открыть квиз на весь экран ↗](../../interactives/quiz-7.html){ target="_blank" }
+[Открыть квиз на весь экран ↗](../interactives/quiz-7.html){ target="_blank" }
 </div>
 
 #### Задание

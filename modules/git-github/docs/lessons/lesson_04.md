@@ -250,7 +250,7 @@ age: 12–14 лет
 
 <div class="interactive-embed" markdown>
 <iframe src="../../interactives/trainer-4.html" title="Тренажёр 4: ветки — branch, switch, merge" loading="lazy"></iframe>
-[Открыть тренажёр на весь экран ↗](../../interactives/trainer-4.html){ target="_blank" }
+[Открыть тренажёр на весь экран ↗](../interactives/trainer-4.html){ target="_blank" }
 </div>
 
 #### Задание

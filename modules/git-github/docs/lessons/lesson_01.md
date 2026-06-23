@@ -188,7 +188,7 @@ age: 12–14 лет
 
 <div class="interactive-embed" markdown>
 <iframe src="../../interactives/quiz-1.html" title="Квиз 1: контроль версий и настройка Git" loading="lazy"></iframe>
-[Открыть квиз на весь экран ↗](../../interactives/quiz-1.html){ target="_blank" }
+[Открыть квиз на весь экран ↗](../interactives/quiz-1.html){ target="_blank" }
 </div>
 
 #### Задание

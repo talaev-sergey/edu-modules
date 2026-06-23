@@ -250,7 +250,7 @@ age: 12–14 лет
 
 <div class="interactive-embed" markdown>
 <iframe src="../../interactives/quiz-3.html" title="Квиз 3: история изменений и возврат к версии" loading="lazy"></iframe>
-[Открыть квиз на весь экран ↗](../../interactives/quiz-3.html){ target="_blank" }
+[Открыть квиз на весь экран ↗](../interactives/quiz-3.html){ target="_blank" }
 </div>
 
 #### Задание

@@ -203,7 +203,7 @@ age: 12–14 лет
 
 <div class="interactive-embed" markdown>
 <iframe src="../../interactives/trainer-1.html" title="Тренажёр 1: жизненный цикл файла в Git" loading="lazy"></iframe>
-[Открыть тренажёр на весь экран ↗](../../interactives/trainer-1.html){ target="_blank" }
+[Открыть тренажёр на весь экран ↗](../interactives/trainer-1.html){ target="_blank" }
 </div>
 
 #### Действия преподавателя

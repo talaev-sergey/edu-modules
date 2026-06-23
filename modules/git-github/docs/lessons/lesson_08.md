@@ -304,7 +304,7 @@ age: 12–14 лет
 
 <div class="interactive-embed" markdown>
 <iframe src="../../interactives/quiz-8.html" title="Квиз 8: итоговый практикум — общий сайт класса на GitHub Pages" loading="lazy"></iframe>
-[Открыть квиз на весь экран ↗](../../interactives/quiz-8.html){ target="_blank" }
+[Открыть квиз на весь экран ↗](../interactives/quiz-8.html){ target="_blank" }
 </div>
 
 #### Задание
