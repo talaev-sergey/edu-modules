@@ -82,6 +82,20 @@
 
 </div>
 
+## Контрольная работа
+
+<div class="presentations">
+
+<div class="presentation-card">
+  <div class="presentation-preview">
+    <span class="presentation-icon">&#128196;</span>
+    <span class="presentation-name">Задания для ученика — печать или проектор</span>
+  </div>
+  <a href="../assets/extra/Контрольная%20работа%20—%20От%20Git%20до%20GitHub.pdf" download class="presentation-btn">Скачать</a>
+</div>
+
+</div>
+
 <!-- ─── Шаблоны для ручного заполнения (куратор) ──────────────────────────────
      Презентации → docs/assets/presentations/, ПО → docs/assets/software/,
      прочие материалы → docs/assets/extra/. Раскомментируй и заполни блок.

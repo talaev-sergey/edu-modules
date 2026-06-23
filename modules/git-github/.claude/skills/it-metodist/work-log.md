@@ -18,3 +18,4 @@
 | 2026-06-20 | Lesson 6 draft — Клонирование и работа с чужими проектами: clone, fork (Mode B; Markdown per user request, continues my-first-app project; pair work + fork) | content/lesson_06.md |
 | 2026-06-21 | Lesson 7 draft — Командная работа: Pull Request, Issues, обзор кода (Mode B; Markdown per user request; continues first-contributions fork + my-first-app; pair code review, full Issue→branch→PR→merge cycle) | content/lesson_07.md |
 | 2026-06-21 | Lesson 8 draft — Итоговый практикум: общий сайт класса на GitHub Pages (Mode B; Markdown; capstone — shared class repo, each student a collaborator, one page each via branch→PR→merge, conflict-free one-file-per-student; new concept only GitHub Pages) | content/lesson_08.md |
+| 2026-06-22 | Control work — От Git до GitHub (fully practical, GitHub-based; sweep-through git-control mini-project covering lessons 1-8; artifact checklist grading, 90 min work + 30 min check for 12 students) | docs/test.md |
