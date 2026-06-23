@@ -1,21 +1,11 @@
 <!DOCTYPE html>
-<!--
-  КВИЗ — 3 : История изменений — просмотр, отмена, возврат (урок 3)
-  Самодостаточный одиночный .html без внешних зависимостей.
-  Палитра и шрифты — как в interactives/trainer-1.html (Catppuccin Latte).
 
-  Формат: вертикальный список карточек-вопросов с вариантами ответа.
-  Проверка: верный ответ подсвечивается зелёным; при ошибке выбранный
-  вариант краснеет, правильный подсвечивается зелёным, а внизу карточки
-  появляется блок с правильным ответом. Справа — итоговая оценка.
--->
 <html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Git: квиз по уроку 3 — история, отмена, возврат к версии</title>
 <style>
-  /* Палитра Catppuccin Latte (светлая) */
   :root {
     --ctp-base:     #eff1f5;
     --ctp-mantle:   #e6e9ef;
@@ -27,12 +17,12 @@
     --c-panel:     var(--ctp-base);
     --c-card:      var(--ctp-mantle);
     --c-border:    var(--ctp-surface0);
-    --c-fg:        #4c4f69;   /* Text */
-    --c-muted:     #6c6f85;   /* Subtext0 */
-    --c-blue:      #1e66f5;   /* Blue */
-    --c-green:     #40a02b;   /* Green */
-    --c-orange:    #fe640b;   /* Peach */
-    --c-red:       #d20f39;   /* Red */
+    --c-fg:        #4c4f69;
+    --c-muted:     #6c6f85;
+    --c-blue:      #1e66f5;
+    --c-green:     #40a02b;
+    --c-orange:    #fe640b;
+    --c-red:       #d20f39;
     --c-on-accent: #eff1f5;
     --radius:      14px;
     --mono:        "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
@@ -56,7 +46,6 @@
   .head__title .git-logo { width: 1.3em; height: 1.3em; vertical-align: -0.28em; }
   .head__sub { margin: 0; color: var(--c-muted); font-size: .92rem; }
 
-  /* Прогресс */
   .score {
     position: sticky; top: 12px; z-index: 5;
     display: flex; align-items: center; gap: 12px;
@@ -69,7 +58,6 @@
   .score__fill { height: 100%; width: 0; background: var(--c-green); transition: width .3s ease; }
   .score__num { font-family: var(--mono); font-size: .85rem; font-weight: 600; color: var(--c-fg); white-space: nowrap; }
 
-  /* Карточка вопроса */
   .q {
     background: var(--c-panel); border: 1px solid var(--c-border);
     border-radius: var(--radius); padding: 18px 18px 16px; margin-bottom: 16px;
@@ -112,7 +100,6 @@
   .opt--wrong code { background: color-mix(in srgb, var(--c-red) 18%, var(--ctp-surface0)); }
   .opt--wrong .opt__mark { opacity: 1; color: var(--c-red); }
 
-  /* Блок с правильным ответом (показывается только при ошибке) */
   .answer {
     margin-top: 13px; border-radius: 10px; padding: 11px 13px;
     background: color-mix(in srgb, var(--c-green) 10%, var(--ctp-base));
@@ -125,7 +112,6 @@
   .answer code { font-family: var(--mono); font-size: .9em; background: var(--ctp-surface0); padding: 1px 6px; border-radius: 6px; }
   @keyframes pop { from { transform: translateY(-4px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-  /* Блок итоговой оценки (правая колонка) */
   .grade {
     position: sticky; top: 74px;
     background: var(--c-panel); border: 1px solid var(--c-border);
@@ -161,7 +147,7 @@
 <body>
   <div class="wrap">
     <header class="head">
-      <h1 class="head__title"><!-- Логотип Git © Jason Long, CC BY 3.0 --><svg class="git-logo" viewBox="0 0 78 78" aria-hidden="true"><path fill="#f03c2e" transform="translate(10 10) rotate(-45 29 29)" d="M5,58c-2.76142,0 -5,-2.23858 -5,-5v-48c0,-2.76142 2.23858,-5 5,-5h33v12.54404c-2.06553,0.94801 -3.5,3.03446 -3.5,5.45596c0,0.73514 0.13221,1.43941 0.37415,2.09031l-15.28384,15.28384c-0.6509,-0.24194 -1.35517,-0.37415 -2.09031,-0.37415c-3.31371,0 -6,2.68629 -6,6c0,3.31371 2.68629,6 6,6c3.31371,0 6,-2.68629 6,-6c0,-0.73514 -0.13221,-1.43941 -0.37415,-2.09031l14.87415,-14.87415l0,11.50851c-2.06553,0.94801 -3.5,3.03446 -3.5,5.45596c0,3.31371 2.68629,6 6,6c3.31371,0 6,-2.68629 6,-6c0,-2.42149 -1.43447,-4.50795 -3.5,-5.45596l0,-12.08808c2.06553,-0.94801 3.5,-3.03446 3.5,-5.45596c0,-2.42149 -1.43447,-4.50795 -3.5,-5.45596l0,-12.54404h10c2.76142,0 5,2.23858 5,5v48c0,2.76142 -2.23858,5 -5,5z"/></svg> Квиз — 3 : История изменений и возврат к версии</h1>
+      <h1 class="head__title"><svg class="git-logo" viewBox="0 0 78 78" aria-hidden="true"><path fill="#f03c2e" transform="translate(10 10) rotate(-45 29 29)" d="M5,58c-2.76142,0 -5,-2.23858 -5,-5v-48c0,-2.76142 2.23858,-5 5,-5h33v12.54404c-2.06553,0.94801 -3.5,3.03446 -3.5,5.45596c0,0.73514 0.13221,1.43941 0.37415,2.09031l-15.28384,15.28384c-0.6509,-0.24194 -1.35517,-0.37415 -2.09031,-0.37415c-3.31371,0 -6,2.68629 -6,6c0,3.31371 2.68629,6 6,6c3.31371,0 6,-2.68629 6,-6c0,-0.73514 -0.13221,-1.43941 -0.37415,-2.09031l14.87415,-14.87415l0,11.50851c-2.06553,0.94801 -3.5,3.03446 -3.5,5.45596c0,3.31371 2.68629,6 6,6c3.31371,0 6,-2.68629 6,-6c0,-2.42149 -1.43447,-4.50795 -3.5,-5.45596l0,-12.08808c2.06553,-0.94801 3.5,-3.03446 3.5,-5.45596c0,-2.42149 -1.43447,-4.50795 -3.5,-5.45596l0,-12.54404h10c2.76142,0 5,2.23858 5,5v48c0,2.76142 -2.23858,5 -5,5z"/></svg> Квиз — 3 : История изменений и возврат к версии</h1>
       <p class="head__sub">Выбери один вариант в каждом вопросе.</p>
     </header>
 
@@ -188,8 +174,6 @@
 
 <script>
 (() => {
-  // Вопросы строго по темам урока 3. correct — индекс верного варианта.
-  // answer — пояснение, которое показывается под вопросом при ошибке.
   const QUESTIONS = [
     {
       q: 'Что такое HEAD в Git?',
@@ -305,10 +289,9 @@
 
   const $ = id => document.getElementById(id);
   const quizEl = $('quiz');
-  let answered = 0;   // на сколько вопросов уже ответили
-  let correct  = 0;   // сколько из них верно
+  let answered = 0;
+  let correct  = 0;
 
-  // Шкала оценок по числу верных ответов (из 10), как в уроке.
   const GRADES = [
     { min: 9, mark: 'Отлично',           color: 'var(--c-green)', note: 'Темы урока усвоены — отличный результат.' },
     { min: 7, mark: 'Хорошо',            color: 'var(--c-blue)',  note: 'Хороший результат, есть что повторить.' },
@@ -369,7 +352,6 @@
     const oi = +btn.dataset.o;
     const item = QUESTIONS[qi];
 
-    // блокируем все варианты этого вопроса
     const card = btn.closest('.q');
     card.querySelectorAll('.opt').forEach(b => {
       b.disabled = true;
@@ -383,7 +365,7 @@
     } else {
       btn.classList.add('opt--wrong');
       btn.querySelector('.opt__mark').textContent = 'ваш ответ';
-      $(`ans-${qi}`).classList.add('answer--show');   // показываем правильный ответ
+      $(`ans-${qi}`).classList.add('answer--show');
     }
     updateScore();
   });

@@ -1,20 +1,11 @@
 <!DOCTYPE html>
-<!--
-  ИНТЕРАКТИВ: Жизненный цикл файла в Git  (урок про git init / add / commit)
-  Самодостаточный одиночный .html без внешних зависимостей.
-  Сделан по шаблону interactives/_template.html.
 
-  Показывает три зоны и путь файла между ними:
-    📂 Рабочая папка  →  📦 Индекс (git add)  →  🗄️ Репозиторий (git commit)
-  Цвета статусов: красный = не в индексе, зелёный = в индексе (staged).
--->
 <html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Git: жизненный цикл файла — git init, add, commit</title>
 <style>
-  /* Палитра Catppuccin Latte (светлая) */
   :root {
     --ctp-base:     #eff1f5;
     --ctp-mantle:   #e6e9ef;
@@ -27,15 +18,15 @@
     --c-panel-2:   var(--ctp-base);
     --c-card:      var(--ctp-mantle);
     --c-border:    var(--ctp-surface0);
-    --c-fg:        #4c4f69;   /* Text */
-    --c-muted:     #6c6f85;   /* Subtext0 */
-    --c-blue:      #1e66f5;   /* Blue */
-    --c-green:     #40a02b;   /* Green */
-    --c-orange:    #fe640b;   /* Peach */
-    --c-red:       #d20f39;   /* Red */
-    --c-purple:      #ED9F76;   /* акцент .git: заливки, рамки, кнопка */
-    --c-purple-text: #B5651D;   /* тот же акцент потемнее — для текста на светлом */
-    --c-on-accent: #eff1f5;   /* текст на цветных кнопках */
+    --c-fg:        #4c4f69;
+    --c-muted:     #6c6f85;
+    --c-blue:      #1e66f5;
+    --c-green:     #40a02b;
+    --c-orange:    #fe640b;
+    --c-red:       #d20f39;
+    --c-purple:      #ED9F76;
+    --c-purple-text: #B5651D;
+    --c-on-accent: #eff1f5;
     --radius:      14px;
     --mono:        "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
     --sans:        "Rubik", system-ui, "Segoe UI", sans-serif;
@@ -112,14 +103,9 @@
     overflow: auto; display: flex; flex-direction: column; gap: 14px;
   }
 
-  /* ── Три зоны ── */
-  /* Без репозитория — только рабочая папка во всю ширину.
-     С репозиторием — фиксированные «рабочая папка» + .git (внутри индекс фикс.,
-     репозиторий растёт вправо по содержимому → горизонтальный скролл сцены). */
   .zones { display: grid; grid-template-columns: 1fr; gap: 12px; align-items: stretch; }
   .zones--repo { grid-template-columns: 320px max-content; }
 
-  /* Индекс и репозиторий живут ВНУТРИ .git — общая рамка-контейнер */
   .gitbox {
     border: 1.5px dashed var(--c-purple);
     border-radius: 14px;
@@ -155,7 +141,6 @@
   .zone__body { display: flex; flex-direction: column; gap: 7px; }
   .zone__empty { color: var(--c-muted); font-size: .8rem; font-style: italic; margin-top: 6px; }
 
-  /* ── Карточка файла ── */
   .file {
     display: flex; align-items: center; gap: 8px;
     background: var(--ctp-base); border: 1px solid var(--c-border);
@@ -178,10 +163,8 @@
   .file--staged-del { --fc: var(--c-green); }
   .file--deleted .file__name,
   .file--staged-del .file__name { text-decoration: line-through; opacity: .8; }
-  /* файл остаётся в рабочей папке, но уже зафиксирован (в индексе / закоммичен) */
   .file--dim { opacity: .5; }
 
-  /* ── Служебная папка .git ── */
   .gitdir {
     display: flex; align-items: center; gap: 8px;
     background: color-mix(in srgb, var(--c-purple) 12%, var(--ctp-base));
@@ -193,7 +176,6 @@
   .gitdir__tag  { margin-left: auto; font-size: .62rem; font-family: var(--mono); color: var(--c-muted); }
 
 
-  /* ── Коммиты ── */
   .commit {
     display: flex; align-items: flex-start; gap: 8px;
     background: var(--ctp-base); border: 1px solid var(--c-border);
@@ -205,7 +187,6 @@
   .commit__msg  { font-size: .78rem; color: var(--c-fg); white-space: nowrap; }
   .commit__author { font-size: .68rem; color: var(--c-muted); white-space: nowrap; }
 
-  /* ── Настройка git config (внутри Локального репозитория) ── */
   .cfg {
     display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
     border: 1px solid var(--c-border); border-radius: 8px;
@@ -226,7 +207,6 @@
   .cfg__btn:hover { filter: brightness(1.06); }
   .cfg--on .cfg__btn { background: var(--ctp-surface0); color: var(--c-fg); border-color: var(--c-border); }
 
-  /* ── Терминал ── */
   .term {
     background: var(--ctp-mantle); border: 1px solid var(--c-border); border-radius: 10px;
     font-family: var(--mono); font-size: 1rem; line-height: 1.6;
@@ -255,7 +235,7 @@
 <body>
   <div class="app">
     <header class="app__head">
-      <h1 class="app__title"><!-- Логотип Git © Jason Long, CC BY 3.0 --><svg class="git-logo" viewBox="0 0 78 78" aria-hidden="true"><path fill="#f03c2e" transform="translate(10 10) rotate(-45 29 29)" d="M5,58c-2.76142,0 -5,-2.23858 -5,-5v-48c0,-2.76142 2.23858,-5 5,-5h33v12.54404c-2.06553,0.94801 -3.5,3.03446 -3.5,5.45596c0,0.73514 0.13221,1.43941 0.37415,2.09031l-15.28384,15.28384c-0.6509,-0.24194 -1.35517,-0.37415 -2.09031,-0.37415c-3.31371,0 -6,2.68629 -6,6c0,3.31371 2.68629,6 6,6c3.31371,0 6,-2.68629 6,-6c0,-0.73514 -0.13221,-1.43941 -0.37415,-2.09031l14.87415,-14.87415l0,11.50851c-2.06553,0.94801 -3.5,3.03446 -3.5,5.45596c0,3.31371 2.68629,6 6,6c3.31371,0 6,-2.68629 6,-6c0,-2.42149 -1.43447,-4.50795 -3.5,-5.45596l0,-12.08808c2.06553,-0.94801 3.5,-3.03446 3.5,-5.45596c0,-2.42149 -1.43447,-4.50795 -3.5,-5.45596l0,-12.54404h10c2.76142,0 5,2.23858 5,5v48c0,2.76142 -2.23858,5 -5,5z"/></svg> Тренажёр — 1 : Жизненный цикл файла в Git</h1>
+      <h1 class="app__title"><svg class="git-logo" viewBox="0 0 78 78" aria-hidden="true"><path fill="#f03c2e" transform="translate(10 10) rotate(-45 29 29)" d="M5,58c-2.76142,0 -5,-2.23858 -5,-5v-48c0,-2.76142 2.23858,-5 5,-5h33v12.54404c-2.06553,0.94801 -3.5,3.03446 -3.5,5.45596c0,0.73514 0.13221,1.43941 0.37415,2.09031l-15.28384,15.28384c-0.6509,-0.24194 -1.35517,-0.37415 -2.09031,-0.37415c-3.31371,0 -6,2.68629 -6,6c0,3.31371 2.68629,6 6,6c3.31371,0 6,-2.68629 6,-6c0,-0.73514 -0.13221,-1.43941 -0.37415,-2.09031l14.87415,-14.87415l0,11.50851c-2.06553,0.94801 -3.5,3.03446 -3.5,5.45596c0,3.31371 2.68629,6 6,6c3.31371,0 6,-2.68629 6,-6c0,-2.42149 -1.43447,-4.50795 -3.5,-5.45596l0,-12.08808c2.06553,-0.94801 3.5,-3.03446 3.5,-5.45596c0,-2.42149 -1.43447,-4.50795 -3.5,-5.45596l0,-12.54404h10c2.76142,0 5,2.23858 5,5v48c0,2.76142 -2.23858,5 -5,5z"/></svg> Тренажёр — 1 : Жизненный цикл файла в Git</h1>
     </header>
 
     <aside class="panel" id="panel">
@@ -324,20 +304,14 @@
 
 <script>
 (() => {
-  // ===== Состояние =====
   let repo = false;
-  // files: {name, tracked, state}
-  //   tracked  — был ли файл хоть раз закоммичен (Git его отслеживает)
-  //   state    — untracked | modified | staged | clean
-  //              | deleted (удалён, не в индексе) | staged-del (удаление в индексе)
   let files = [];
-  let commits = [];      // {hash, message, author}
+  let commits = [];
   let fileSeq = 0;
-  let config = null;     // {name, email} — git config user.name/user.email (глобальный)
+  let config = null;
 
   const NAMES = ['about.txt', 'readme.md', 'index.html', 'notes.txt', 'main.py', 'style.css'];
 
-  // Пул случайных авторов (имя латиницей + e-mail), как в уроке 1
   const IDENTS = [
     { name: 'Ivan Petrov',    email: 'ivan.petrov@example.com' },
     { name: 'Maria Ivanova',  email: 'maria.ivanova@mail.ru' },
@@ -349,7 +323,6 @@
     { name: 'Lena Morozova',  email: 'lena.morozova@yandex.ru' },
   ];
 
-  // ===== DOM =====
   const $ = id => document.getElementById(id);
   const termEl = $('term');
 
@@ -368,10 +341,7 @@
     setTimeout(() => z.classList.remove('zone--flash'), 450);
   }
 
-  // ===== Рендер =====
   function render() {
-    // Рабочая папка = файлы на диске. Добавленные (staged) и сохранённые (clean)
-    // остаются в папке, но показаны приглушённо. Удаление staged-del — уже не на диске.
     const WORK_RANK = { untracked: 0, modified: 0, deleted: 0, plain: 0, staged: 1, clean: 2 };
     const inWork  = files
       .filter(f => f.state in WORK_RANK)
@@ -388,17 +358,13 @@
     $('cntIndex').textContent = inIndex.length;
     $('cntRepo').textContent  = commits.length;
 
-    // индекс и репозиторий (внутри .git) появляются только после git init
     $('gitBox').style.display = repo ? '' : 'none';
     document.querySelector('.zones').classList.toggle('zones--repo', repo);
 
-    // доступность кнопок
     $('btnInit').disabled   = repo;
     $('btnDeinit').disabled = !repo;
-    // файлами можно управлять и без репозитория (обычная папка)
     $('btnNew').disabled    = false;
     const hasStaged = inIndex.length > 0;
-    // есть что добавить в индекс: новые/изменённые/удалённые, ещё не застейдженные
     const hasUnstaged = files.some(f => f.state === 'untracked' || f.state === 'modified' || f.state === 'deleted');
     $('btnEdit').disabled   = activeFiles().length === 0;
     $('btnDel').disabled    = activeFiles().length === 0;
@@ -421,19 +387,16 @@
     for (const f of list) {
       let cls, icon, tag;
       if (work) {
-        // как файл выглядит на диске (в рабочей папке)
         const map = {
           plain:     ['file--plain',     '📄', 'файл'],
           untracked: ['file--untracked', '📄', 'new'],
           modified:  ['file--modified',  '📄', 'modified'],
           deleted:   ['file--deleted',   '🗑️', 'deleted'],
-          // на диске остаются, но уже зафиксированы — приглушаем
           staged:    ['file--staged file--dim', '📄', 'в индексе'],
           clean:     ['file--clean file--dim',  '📄', 'сохранён'],
         };
         [cls, icon, tag] = map[f.state];
       } else {
-        // содержимое индекса
         if (f.state === 'staged-del') [cls, icon, tag] = ['file--staged-del', '🗑️', 'deleted'];
         else                          [cls, icon, tag] = ['file--staged', '📦', 'staged'];
       }
@@ -492,11 +455,8 @@
     });
   }
 
-  // ===== Действия =====
   function hash() { return Math.random().toString(16).slice(2, 9); }
-  // файлы, реально лежащие на диске (не удалённые)
   function activeFiles() { return files.filter(f => f.state !== 'deleted' && f.state !== 'staged-del'); }
-  // файлы в индексе: добавленные/изменённые (staged) и удаления (staged-del)
   function stagedFiles() { return files.filter(f => f.state === 'staged' || f.state === 'staged-del'); }
 
   $('btnInit').onclick = () => {
@@ -504,7 +464,6 @@
     cmd('git init');
     term('<span class="ok">Initialized empty Git repository in ./.git/</span>');
     hint('В папке появилась служебная папка <span class="ok">.git/</span> — Git начал следить за изменениями.');
-    // файлы, что уже лежали в папке, Git увидит как untracked
     const seen = files.filter(f => f.state === 'plain');
     seen.forEach(f => { f.state = 'untracked'; });
     if (seen.length) hint(`Существующие файлы Git увидел как <span class="red">untracked</span>: <span class="red">${seen.map(f => f.name).join(', ')}</span>`);
@@ -514,7 +473,6 @@
   $('btnDeinit').onclick = () => {
     repo = false;
     commits = [];
-    // удалённые файлы уже не на диске — убираем; папка снова обычная (plain)
     files = activeFiles().map(f => ({ ...f, tracked: false, state: 'plain' }));
     cmd('rm -rf .git');
     hint('Папка <span class="red">.git/</span> удалена — это снова обычная папка, а не репозиторий. Файлы остались, история коммитов пропала.');
@@ -534,8 +492,6 @@
   };
 
   $('btnEdit').onclick = () => {
-    // нагляднее всего изменить уже закоммиченный файл (clean → modified);
-    // иначе берём любой существующий на диске
     const f = files.find(x => x.state === 'clean')
            || files.find(x => x.state === 'untracked')
            || files.find(x => x.state === 'plain')
@@ -543,13 +499,10 @@
     if (!f) return;
     cmd(`echo "новая строка" >> ${f.name}`);
     if (f.state === 'plain') {
-      // нет репозитория — просто меняем файл, Git ни при чём
       hint(`Файл ${f.name} изменён. Репозитория нет — Git за ним не следит.`);
     } else if (f.state === 'untracked') {
-      // новый файл правим — он так и остаётся untracked
       hint(`Файл <span class="red">${f.name}</span> изменён (всё ещё untracked).`);
     } else {
-      // отслеживаемый файл (clean) или возврат staged в работу → modified
       f.state = 'modified';
       hint(`Файл <span class="red">${f.name}</span> изменён — правки в рабочей папке, не в индексе.`);
     }
@@ -562,11 +515,9 @@
     if (!f) return;
     cmd(`rm ${f.name}`);
     if (f.tracked) {
-      // отслеживаемый файл: удаление — это изменение, его нужно add + commit
       f.state = 'deleted';
       hint(`Файл <span class="red">${f.name}</span> удалён с диска. Это изменение: чтобы зафиксировать удаление, нужно <span class="grn">git add</span> и <span class="ok">git commit</span>.`);
     } else {
-      // неотслеживаемый файл (plain без репозитория или untracked) — просто исчезает
       files = files.filter(x => x !== f);
       if (repo) hint(`Файл <span class="red">${f.name}</span> удалён. Он не был в репозитории (untracked), поэтому для Git ничего не изменилось.`);
       else      hint(`Файл ${f.name} удалён из папки.`);
@@ -589,7 +540,6 @@
   };
 
   $('btnConfig').onclick = () => {
-    // случайный автор (не повторяем текущего)
     let id;
     do { id = IDENTS[Math.floor(Math.random() * IDENTS.length)]; }
     while (config && id.name === config.name);
@@ -614,7 +564,6 @@
     const msg = parts.join('; ');
     cmd(`git commit -m "${msg}"`);
 
-    // без конфига Git не знает автора — коммит не проходит
     if (!config) {
       term('<span class="err">*** Please tell me who you are.</span>');
       term('<span class="dim">Run</span>');
@@ -629,7 +578,6 @@
 
     const h = hash();
     commits.push({ hash: h, message: msg, author: `${config.name} <${config.email}>` });
-    // staged → clean (теперь отслеживается); staged-del → файл уходит из репозитория
     staged.forEach(f => {
       if (f.state === 'staged-del') files = files.filter(x => x !== f);
       else { f.state = 'clean'; f.tracked = true; }
@@ -671,7 +619,6 @@
       term('<span class="dim">Untracked files:</span>');
       untracked.forEach(f => term(`   <span class="red">${f.name}</span>`));
     }
-    // подсказка зависит от того, что показал status
     if (staged.length && !notStaged.length && !untracked.length) {
       hint('Зелёное — уже в индексе и готово к сохранению. Делайте git commit.');
     } else if (staged.length) {
@@ -702,7 +649,6 @@
     render();
   };
 
-  // ===== Старт =====
   hint('Это обычная папка. Можно сразу создавать файлы, а затем превратить её в репозиторий кнопкой «Создать репозиторий» (git init).');
   render();
 })();

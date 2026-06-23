@@ -1,31 +1,12 @@
 <!DOCTYPE html>
-<!--
-  ШАБЛОН ИНТЕРАКТИВА  (modules/git-github/docs/interactives/)
-  ─────────────────────────────────────────────────────────────────────────
-  Самодостаточный одиночный .html без внешних зависимостей (как
-  theme/static_assets/assets/presentation.html). Работает офлайн внутри
-  dist/*.zip и онлайн на GitHub Pages.
 
-  КАК СДЕЛАТЬ НОВЫЙ ИНТЕРАКТИВ:
-    1. Скопируй этот файл в interactives/<имя>.html
-    2. Замени <title>, .app__title, текст вступления.
-    3. Свою логику пиши в зоне  ===== ЛОГИКА ИНТЕРАКТИВА =====
-    4. Управляющие кнопки клади в  .panel  (левая колонка),
-       визуализацию — в  .stage  (правая колонка).
-    5. Терминальные строки выводи через  term('...').
 
-  Дизайн-система: Catppuccin Latte (светлая). Семантические токены --c-*
-  ссылаются на палитру --ctp-*. Цвета git-статусов:
-    красный  = изменения не в индексе (untracked / modified)
-    зелёный  = в индексе (staged, Changes to be committed)
--->
 <html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Интерактив — шаблон</title>
 <style>
-  /* Палитра Catppuccin Latte (светлая) */
   :root {
     --ctp-base:     #eff1f5;
     --ctp-mantle:   #e6e9ef;
@@ -38,15 +19,15 @@
     --c-panel-2:   var(--ctp-base);
     --c-card:      var(--ctp-mantle);
     --c-border:    var(--ctp-surface0);
-    --c-fg:        #4c4f69;   /* Text */
-    --c-muted:     #6c6f85;   /* Subtext0 */
-    --c-blue:      #1e66f5;   /* Blue */
-    --c-green:     #40a02b;   /* Green */
-    --c-orange:    #fe640b;   /* Peach */
-    --c-red:       #d20f39;   /* Red */
-    --c-purple:      #ED9F76;   /* акцент .git: заливки, рамки, кнопка */
-    --c-purple-text: #B5651D;   /* тот же акцент потемнее — для текста на светлом */
-    --c-on-accent: #eff1f5;   /* текст на цветных кнопках */
+    --c-fg:        #4c4f69;
+    --c-muted:     #6c6f85;
+    --c-blue:      #1e66f5;
+    --c-green:     #40a02b;
+    --c-orange:    #fe640b;
+    --c-red:       #d20f39;
+    --c-purple:      #ED9F76;
+    --c-purple-text: #B5651D;
+    --c-on-accent: #eff1f5;
     --radius:      14px;
     --mono:        "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
     --sans:        "Rubik", system-ui, "Segoe UI", sans-serif;
@@ -70,7 +51,6 @@
     padding: 18px;
   }
 
-  /* ── Шапка ── */
   .app__head {
     grid-column: 1 / -1;
     display: flex;
@@ -87,7 +67,6 @@
   }
   .app__subtitle { margin: 0; color: var(--c-muted); font-size: .95rem; }
 
-  /* ── Левая панель управления ── */
   .panel {
     background: var(--c-panel);
     border: 1px solid var(--c-border);
@@ -134,7 +113,6 @@
   .btn--ghost    { background: transparent; }
   .btn__key { margin-left: auto; font-family: var(--mono); font-size: .72rem; color: var(--c-muted); }
 
-  /* ── Правая сцена ── */
   .stage {
     border: 1px solid var(--c-border);
     border-radius: var(--radius);
@@ -146,7 +124,6 @@
     gap: 14px;
   }
 
-  /* ── Терминал ── */
   .term {
     background: var(--ctp-mantle);
     border: 1px solid var(--c-border);
@@ -167,7 +144,6 @@
   .term .dim  { color: var(--c-muted); }
   .term .ok   { color: var(--c-blue); }
 
-  /* ── Бейдж / чип ── */
   .chip {
     font-family: var(--mono);
     font-size: .72rem;
@@ -191,15 +167,13 @@
       <p class="app__subtitle">Короткое пояснение, что показывает этот интерактив.</p>
     </header>
 
-    <!-- ЛЕВО: панель управления -->
     <aside class="panel" id="panel">
       <div class="panel__group-title">Управление</div>
       <button class="btn btn--primary">Пример кнопки</button>
     </aside>
 
-    <!-- ПРАВО: сцена + терминал -->
     <main class="stage">
-      <section id="scene"><!-- визуализация --></section>
+      <section id="scene"></section>
       <div class="term" id="term">
         <div class="term__head">GIT BASH</div>
       </div>
@@ -207,7 +181,6 @@
   </div>
 
 <script>
-  // ===== ОБЩИЕ ХЕЛПЕРЫ =====
   const term = (() => {
     const el = document.getElementById('term');
     return (html) => {
@@ -218,8 +191,6 @@
     };
   })();
 
-  // ===== ЛОГИКА ИНТЕРАКТИВА =====
-  // Здесь живёт состояние и обработчики конкретного интерактива.
   term('<span class="dim">$ </span><span class="cmd">echo</span> "шаблон готов"');
 </script>
 </body>

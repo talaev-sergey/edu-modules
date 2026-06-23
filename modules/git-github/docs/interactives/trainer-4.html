@@ -1,24 +1,11 @@
 <!DOCTYPE html>
-<!--
-  ИНТЕРАКТИВ: Ветки в Git  (урок 4 — git branch / switch / merge)
-  Самодостаточный одиночный .html без внешних зависимостей.
-  Сделан на основе interactives/trainer-1.html (та же палитра Catppuccin Latte).
 
-  Показывает граф коммитов и указатели веток:
-    • git switch -c — создать ветку и перейти на неё
-    • git switch    — переключиться (файлы в папке меняются под ветку)
-    • git commit    — новый коммит на текущей ветке
-    • git merge      — слияние: быстрое (fast-forward) или коммит слияния
-    • git branch -d  — удалить влитую ветку
-  HEAD-стрелка показывает, на какой ветке мы стоим.
--->
 <html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Git: ветки — branch, switch, merge</title>
 <style>
-  /* Палитра Catppuccin Latte (светлая) */
   :root {
     --ctp-base:     #eff1f5;
     --ctp-mantle:   #e6e9ef;
@@ -31,15 +18,15 @@
     --c-panel-2:   var(--ctp-base);
     --c-card:      var(--ctp-mantle);
     --c-border:    var(--ctp-surface0);
-    --c-fg:        #4c4f69;   /* Text */
-    --c-muted:     #6c6f85;   /* Subtext0 */
-    --c-blue:      #1e66f5;   /* Blue */
-    --c-green:     #40a02b;   /* Green */
-    --c-orange:    #fe640b;   /* Peach */
-    --c-red:       #d20f39;   /* Red */
-    --c-purple:      #ED9F76;   /* акцент: заливки, рамки, кнопка */
-    --c-purple-text: #B5651D;   /* тот же акцент потемнее — для текста */
-    --c-on-accent: #eff1f5;   /* текст на цветных кнопках */
+    --c-fg:        #4c4f69;
+    --c-muted:     #6c6f85;
+    --c-blue:      #1e66f5;
+    --c-green:     #40a02b;
+    --c-orange:    #fe640b;
+    --c-red:       #d20f39;
+    --c-purple:      #ED9F76;
+    --c-purple-text: #B5651D;
+    --c-on-accent: #eff1f5;
     --radius:      14px;
     --mono:        "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
     --sans:        "Rubik", system-ui, "Segoe UI", sans-serif;
@@ -126,7 +113,6 @@
   }
   select:focus { outline: none; border-color: var(--c-blue); }
 
-  /* индикатор несохранённых изменений */
   .dirty-badge {
     display: none; align-items: center; gap: 7px;
     font-size: .78rem; color: var(--c-orange); font-weight: 600;
@@ -172,7 +158,6 @@
   .blabel { font-family: var(--mono); font-size: 11.5px; font-weight: 600; }
   .blabel__bg { rx: 6; }
 
-  /* ── Терминал ── */
   .term {
     background: var(--ctp-mantle); border-top: 1px solid var(--c-border);
     font-family: var(--mono); font-size: .95rem; line-height: 1.55;
@@ -201,7 +186,7 @@
 <body>
   <div class="app">
     <header class="app__head">
-      <h1 class="app__title"><!-- Логотип Git © Jason Long, CC BY 3.0 --><svg class="git-logo" viewBox="0 0 78 78" aria-hidden="true"><path fill="#f03c2e" transform="translate(10 10) rotate(-45 29 29)" d="M5,58c-2.76142,0 -5,-2.23858 -5,-5v-48c0,-2.76142 2.23858,-5 5,-5h33v12.54404c-2.06553,0.94801 -3.5,3.03446 -3.5,5.45596c0,0.73514 0.13221,1.43941 0.37415,2.09031l-15.28384,15.28384c-0.6509,-0.24194 -1.35517,-0.37415 -2.09031,-0.37415c-3.31371,0 -6,2.68629 -6,6c0,3.31371 2.68629,6 6,6c3.31371,0 6,-2.68629 6,-6c0,-0.73514 -0.13221,-1.43941 -0.37415,-2.09031l14.87415,-14.87415l0,11.50851c-2.06553,0.94801 -3.5,3.03446 -3.5,5.45596c0,3.31371 2.68629,6 6,6c3.31371,0 6,-2.68629 6,-6c0,-2.42149 -1.43447,-4.50795 -3.5,-5.45596l0,-12.08808c2.06553,-0.94801 3.5,-3.03446 3.5,-5.45596c0,-2.42149 -1.43447,-4.50795 -3.5,-5.45596l0,-12.54404h10c2.76142,0 5,2.23858 5,5v48c0,2.76142 -2.23858,5 -5,5z"/></svg> Тренажёр — 4 : Ветки в Git</h1>
+      <h1 class="app__title"><svg class="git-logo" viewBox="0 0 78 78" aria-hidden="true"><path fill="#f03c2e" transform="translate(10 10) rotate(-45 29 29)" d="M5,58c-2.76142,0 -5,-2.23858 -5,-5v-48c0,-2.76142 2.23858,-5 5,-5h33v12.54404c-2.06553,0.94801 -3.5,3.03446 -3.5,5.45596c0,0.73514 0.13221,1.43941 0.37415,2.09031l-15.28384,15.28384c-0.6509,-0.24194 -1.35517,-0.37415 -2.09031,-0.37415c-3.31371,0 -6,2.68629 -6,6c0,3.31371 2.68629,6 6,6c3.31371,0 6,-2.68629 6,-6c0,-0.73514 -0.13221,-1.43941 -0.37415,-2.09031l14.87415,-14.87415l0,11.50851c-2.06553,0.94801 -3.5,3.03446 -3.5,5.45596c0,3.31371 2.68629,6 6,6c3.31371,0 6,-2.68629 6,-6c0,-2.42149 -1.43447,-4.50795 -3.5,-5.45596l0,-12.08808c2.06553,-0.94801 3.5,-3.03446 3.5,-5.45596c0,-2.42149 -1.43447,-4.50795 -3.5,-5.45596l0,-12.54404h10c2.76142,0 5,2.23858 5,5v48c0,2.76142 -2.23858,5 -5,5z"/></svg> Тренажёр — 4 : Ветки в Git</h1>
     </header>
 
     <aside class="panel" id="panel">
@@ -244,25 +229,19 @@
 
 <script>
 (() => {
-  // ===== Состояние =====
-  // commit: {id, hash, msg, parents:[ids], lane, col, fns:[...]}
-  //   fns — какие функции есть в calc.py на момент этого коммита (для наглядности «файлы меняются»)
   let commits = {};
-  let order = [];          // id в порядке создания (= номер колонки)
-  let branches = {};       // имя -> id коммита (куда указывает ветка)
-  let head = 'master';     // текущая ветка
-  let dirty = false;       // есть несохранённые правки в calc.py
-  let laneOf = {};         // имя ветки -> номер дорожки
+  let order = [];
+  let branches = {};
+  let head = 'master';
+  let dirty = false;
+  let laneOf = {};
   let seq = 0;
-  let bUid = {};           // имя ветки -> уникальный id ЭКЗЕМПЛЯРА ветки
-  let uidSeq = 0;          // счётчик экземпляров (новая ветка с тем же именем = новый id)
+  let bUid = {};
+  let uidSeq = 0;
 
-  // палитра дорожек (0 — master)
   const LANE_COLORS = ['#1e66f5', '#fe640b', '#40a02b', '#8839ef', '#d20f39', '#179299'];
-  // подсказки имён для поля ввода
   const SUGGEST = ['feature-power', 'feature-square', 'feature-max', 'feature-hello', 'feature-cube'];
 
-  // ===== DOM =====
   const $ = id => document.getElementById(id);
   const termEl = $('term');
 
@@ -275,12 +254,10 @@
   function cmd(text) { term(`<span class="dim">$ </span><span class="cmd">${text}</span>`); }
   function hint(text) { term(`<span class="hint">💡 ${text}</span>`); }
 
-  // ===== Утилиты графа =====
   function hash() { return Math.random().toString(16).slice(2, 9); }
   function laneColor(name) { return LANE_COLORS[laneOf[name] % LANE_COLORS.length]; }
   function tip() { return commits[branches[head]]; }
 
-  // a является предком b? (идём от b вверх по родителям)
   function isAncestor(aId, bId) {
     if (aId === bId) return true;
     const seen = new Set(), stack = [bId];
@@ -301,14 +278,9 @@
     return id;
   }
 
-  // ===== Рендер графа =====
   const COLW = 96, LANEH = 74, PADX = 46, PADY = 40, R = 12;
 
   function render() {
-    // ── Достижимость: рисуем только коммиты, на которые ведёт какая-то ветка ──
-    // Удалил ветку → её коммиты, если на них больше никто не ссылается, становятся
-    // недостижимыми и пропадают из графа (как делает Git). Новая ветка с тем же
-    // именем — это другой ЭКЗЕМПЛЯР (bUid), старые коммиты к ней не возвращаются.
     const reach = new Set();
     (function () {
       const stack = Object.values(branches);
@@ -321,33 +293,20 @@
     })();
     const vis = order.filter(id => reach.has(id));
 
-    // ── Раскладка дорожек (как в VS Code) ──
-    // 1) Пока ветка жива, её коммиты остаются на СВОЕЙ дорожке и в своём цвете —
-    //    по экземпляру ветки, на котором их создали (bornUid). После слияния влитая
-    //    ветка продолжает «вестись» отдельной дорожкой, а не сливается в линию.
-    // 2) Когда ветку удаляют, её осиротевшие коммиты переходят к той ветке, что их
-    //    теперь содержит (обход по первому родителю), и перекрашиваются в её цвет.
     const colFor = l => LANE_COLORS[l % LANE_COLORS.length];
     const aliveUids = new Set(Object.values(bUid));
     const rawLane = {}, dcolor = {};
-    // 1) по «родному» экземпляру ветки, если он ещё существует
     vis.forEach(id => {
       if (aliveUids.has(commits[id].bornUid)) { rawLane[id] = commits[id].lane; dcolor[id] = colFor(commits[id].lane); }
     });
-    // 2) осиротевшие коммиты (их ветку удалили) забирает живая ветка по первому родителю
     Object.keys(branches).sort((a, b) => laneOf[a] - laneOf[b]).forEach(bn => {
       let cur = branches[bn];
       while (cur) {
         if (!(cur in rawLane)) { rawLane[cur] = laneOf[bn]; dcolor[cur] = colFor(laneOf[bn]); }
         const ps = commits[cur].parents;
-        cur = ps && ps.length ? ps[0] : null;   // идём по первому родителю
+        cur = ps && ps.length ? ps[0] : null;
       }
     });
-    // 3) влитая боковая ветка, чей ярлык удалили: коммит достижим только через 2-го
-    //    родителя слияния, поэтому остаётся на своей дорожке (railroad навсегда —
-    //    это часть истории), НО перекрашивается в цвет ветки, в которую его влили
-    //    (берём у дочернего коммита слияния, обычно master), чтобы он не выглядел как
-    //    живая ветка.
     const kids = {};
     vis.forEach(id => (commits[id].parents || []).forEach(p => { (kids[p] = kids[p] || []).push(id); }));
     vis.forEach(id => {
@@ -357,17 +316,14 @@
                         .sort((a, b) => rawLane[a] - rawLane[b]);
       dcolor[id] = colored.length ? dcolor[colored[0]] : colFor(commits[id].lane);
     });
-    // схлопываем пустые дорожки: используемые номера → 0,1,2… (одна ветка ляжет в линию сверху)
     const usedSorted = [...new Set(vis.map(id => rawLane[id]))].sort((a, b) => a - b);
     const laneRemap = {};
     usedSorted.forEach((l, i) => { laneRemap[l] = i; });
     const dlane = {};
     vis.forEach(id => { dlane[id] = laneRemap[rawLane[id]]; });
-    // тесная нумерация колонок: только видимые коммиты, без «дыр» от удалённых
     const colIdx = {};
     vis.forEach((id, i) => { colIdx[id] = i; });
 
-    // координаты
     const maxCol = vis.length ? vis.length - 1 : 0;
     const maxLane = usedSorted.length ? usedSorted.length - 1 : 0;
 
@@ -383,11 +339,10 @@
     svg.setAttribute('height', H);
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
-    // рёбра parent -> child
     vis.forEach(id => {
       const c = commits[id];
       (c.parents || []).forEach((p, i) => {
-        if (!reach.has(p)) return;   // родитель скрыт (недостижим) — ребро не рисуем
+        if (!reach.has(p)) return;
         const x1 = cx(p), y1 = cy(p), x2 = cx(id), y2 = cy(id);
         const mid = (x1 + x2) / 2;
         const path = document.createElementNS(svgNS, 'path');
@@ -397,7 +352,6 @@
       });
     });
 
-    // узлы
     const tipId = branches[head];
     vis.forEach(id => {
       const c = commits[id];
@@ -423,7 +377,6 @@
       svg.appendChild(g);
     });
 
-    // подписи веток (сгруппированы по коммиту-вершине, стопкой)
     const byCommit = {};
     Object.keys(branches).forEach(name => {
       const id = branches[name];
@@ -443,7 +396,6 @@
         tEl.setAttribute('y', oy + 14);
         tEl.setAttribute('fill', isHead ? '#fff' : col);
         tEl.textContent = label;
-        // фон
         const wpx = label.length * 7.2 + 16;
         const bg = document.createElementNS(svgNS, 'rect');
         bg.setAttribute('x', lx);
@@ -465,7 +417,6 @@
     wrap.innerHTML = '';
     wrap.appendChild(svg);
 
-    // верхняя плашка
     $('headChip').textContent = 'HEAD → ' + head;
     $('headChip').style.background = 'color-mix(in srgb, ' + laneColor(head) + ' 16%, #eff1f5)';
     $('headChip').style.borderColor = laneColor(head);
@@ -473,14 +424,12 @@
     const fns = tip() ? tip().fns : [];
     $('filesChip').textContent = '📄 calc.py: ' + (fns.length ? fns.join(', ') + '()' : 'пусто');
 
-    // бейдж изменений
     const badge = $('dirtyBadge');
     badge.className = 'dirty-badge ' + (dirty ? 'show' : 'clean');
     badge.innerHTML = dirty
       ? '● calc.py изменён — не закоммичено'
       : '✓ рабочая папка чистая';
 
-    // селект «другая ветка»
     const sel = $('targetSel');
     const prev = sel.value;
     const others = Object.keys(branches).filter(b => b !== head).sort();
@@ -498,7 +447,6 @@
     $('btnDel').disabled = noOthers;
     $('btnCommit').disabled = !dirty;
 
-    // подсказка имени для новой ветки
     const nameInput = $('newName');
     if (!nameInput.value.trim() || Object.keys(branches).includes(nameInput.value.trim())) {
       const free = SUGGEST.find(s => !Object.keys(branches).includes(s));
@@ -506,7 +454,6 @@
     }
   }
 
-  // ===== Действия =====
   $('btnEdit').onclick = () => {
     dirty = true;
     cmd('code calc.py   ' + '<span class="dim"># дописали функцию и сохранили (Ctrl+S)</span>');
@@ -516,7 +463,6 @@
 
   $('btnCommit').onclick = () => {
     if (!dirty) { cmd('git commit'); term('<span class="grn">nothing to commit, working tree clean</span>'); render(); return; }
-    // придумываем имя новой функции по ветке; если такая уже есть — добавляем номер
     const parentTip = tip();
     const prevFns = parentTip ? parentTip.fns.slice() : [];
     let fnName = funcForBranch(head);
@@ -554,11 +500,10 @@
     }
     if (branches[name]) { term(`<span class="err">fatal: a branch named '${name}' already exists</span>`); return; }
     branches[name] = branches[head];
-    // берём наименьшую свободную дорожку (как VS Code переиспользует освободившиеся)
     const usedLanes = new Set(Object.values(laneOf));
     let lane = 1; while (usedLanes.has(lane)) lane++;
     laneOf[name] = lane;
-    bUid[name] = ++uidSeq;   // новый экземпляр ветки (даже если имя повторяет удалённую)
+    bUid[name] = ++uidSeq;
     head = name;
     term(`<span class="ok">Switched to a new branch '${name}'</span>`);
     hint(`Создана ветка <span class="acc">${name}</span> от текущего коммита, и мы сразу перешли на неё (звёздочка <code>*</code> теперь у неё).`);
@@ -598,7 +543,6 @@
       return;
     }
     if (isAncestor(Hc, Tc)) {
-      // fast-forward: текущая ветка просто догоняет
       branches[head] = Tc;
       term(`<span class="dim">Updating ${commits[Hc].hash}..${commits[Tc].hash}</span>`);
       term('<span class="grn">Fast-forward</span>');
@@ -606,7 +550,6 @@
       render();
       return;
     }
-    // настоящее слияние: ветки разошлись -> коммит слияния
     const mergedFns = unionFns(commits[Hc].fns, commits[Tc].fns);
     const msg = `Merge branch '${t}'`;
     const id = makeCommit(msg, [Hc, Tc], laneOf[head], mergedFns, head);
@@ -651,13 +594,11 @@
 
   $('btnReset').onclick = () => { init(); hint('Состояние сброшено к началу урока: проект-калькулятор на ветке master.'); render(); };
 
-  // ===== Старт =====
   function init() {
     commits = {}; order = []; branches = {}; laneOf = { master: 0 };
     head = 'master'; dirty = false; seq = 0; fnSeq = 0;
     uidSeq = 0; bUid = { master: ++uidSeq };
     termEl.innerHTML = '<div class="term__head">GIT BASH</div>';
-    // стартовая история калькулятора (как папка my-first-app к уроку 4)
     let p = makeCommit('Создал калькулятор: сложение', [], 0, ['add'], 'master');
     p = makeCommit('Добавил функцию вычитания', [p], 0, ['add', 'subtract'], 'master');
     p = makeCommit('Добавил функцию умножения', [p], 0, ['add', 'subtract', 'multiply'], 'master');
