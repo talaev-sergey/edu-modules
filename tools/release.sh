@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+# Публикует zip каждого модуля в GitHub Releases (лучшая практика).
+#
+# Версия берётся из git-тегов модуля (тег <name>-vMAJOR.MINOR) — надёжная история,
+# не теряется при ручном удалении релиза. В разделе Releases остаётся ровно одна
+# (последняя) версия модуля: старый релиз удаляется, тег-история сохраняется.
+#
+#   ./tools/release.sh                       — выпустить все модули (minor +1)
+#   ./tools/release.sh git-github            — выпустить один модуль
+#   BUMP=major ./tools/release.sh git-github — поднять major (X+1.0)
+#   DRY_RUN=true ./tools/release.sh          — только показать план, ничего не публиковать
+#
+# Требует gh CLI и токен с правом contents:write (GH_TOKEN в CI).
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+target="${1:-all}"
+BUMP="${BUMP:-minor}"      # minor | major
+DRY_RUN="${DRY_RUN:-false}"
+
+next_version() {
+  # Эхо следующей версии модуля по его git-тегам.
+  local name="$1" last major minor
+  last="$(git tag --list "${name}-v*" \
+    | sed "s|^${name}-v||" \
+    | sort -t. -k1,1n -k2,2n \
+    | tail -n1)"
+  if [[ -z "$last" ]]; then
+    echo "1.0"; return
+  fi
+  major="${last%%.*}"; minor="${last#*.}"
+  if [[ "$BUMP" == major ]]; then
+    echo "$(( major + 1 )).0"
+  else
+    echo "${major}.$(( minor + 1 ))"
+  fi
+}
+
+release_one() {
+  local name="$1"
+  local zip="dist/$name.zip"
+  [[ -f "$zip" ]] || { echo "пропуск $name: нет $zip"; return; }
+
+  # Текущий опубликованный релиз модуля (будет удалён после нового).
+  local old_release
+  old_release="$(gh release list --json tagName --jq \
+    "map(.tagName) | map(select(startswith(\"${name}-v\"))) | first // \"\"")"
+
+  local ver new_tag
+  ver="$(next_version "$name")"
+  new_tag="${name}-v${ver}"
+
+  if [[ "$DRY_RUN" == true ]]; then
+    echo "[dry-run] $name → $new_tag (bump=$BUMP); удалил бы релиз: ${old_release:-<нет>}"
+    return
+  fi
+
+  echo "→ Релиз $name $ver (тег $new_tag)"
+  ( cd dist && sha256sum "$name.zip" > "$name.zip.sha256" )
+
+  gh release create "$new_tag" "$zip" "dist/$name.zip.sha256" \
+    --target "${GITHUB_SHA:-HEAD}" \
+    --title "${name} ${ver}" \
+    --generate-notes \
+    --latest=false
+
+  if [[ -n "$old_release" && "$old_release" != "$new_tag" ]]; then
+    echo "  удаляю прошлый релиз $old_release (тег-история сохраняется)"
+    gh release delete "$old_release" --yes
+  fi
+}
+
+if [[ "$target" == all ]]; then
+  ./build.sh
+  for m in modules/*/; do
+    name="$(basename "$m")"
+    [[ "$name" == _* ]] && continue
+    release_one "$name"
+  done
+else
+  ./build.sh "$target"
+  release_one "$target"
+fi

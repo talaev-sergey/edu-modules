@@ -1,0 +1,47 @@
+name: Release modules
+
+on:
+  workflow_dispatch:
+    inputs:
+      module:
+        description: "Имя папки модуля или 'all'"
+        required: true
+        default: all
+      bump:
+        description: "Какую часть версии поднять"
+        type: choice
+        options: [minor, major]
+        default: minor
+      dry_run:
+        description: "Только показать план, ничего не публиковать"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Build & release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUMP: ${{ inputs.bump }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: ./tools/release.sh "${{ inputs.module }}"
