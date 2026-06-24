@@ -61,38 +61,55 @@ EOF
   cp "$site/start.command" "$site/start.sh"
   chmod +x "$site/start.command" "$site/start.sh"
 
+  # start.bat — только тонкая обёртка: cmd.exe не умеет ни UNC-пути, ни UTF-8,
+  # поэтому всю работу делает PowerShell (нативно понимает сетевые пути и Unicode).
   cat > "$site/start.bat" <<'EOF'
 @echo off
-rem Windows: двойной клик — открывает браузер и поднимает локальный сервер.
-rem pushd (в отличие от cd) понимает сетевые UNC-пути \\host\share, временно
-rem подключая их как диск, — иначе запуск с сетевой шары отдал бы C:\Windows.
-pushd "%~dp0"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0serve.ps1"
+EOF
 
-rem Ищем Python (python или py). Если нет — пробуем поставить через Chocolatey.
-where python >nul 2>nul && (set PY=python& goto run)
-where py     >nul 2>nul && (set PY=py& goto run)
+  # serve.ps1 — пишется с UTF-8 BOM, чтобы Windows PowerShell 5.1 правильно читал
+  # кириллицу. $PSScriptRoot даёт папку сайта (работает и для UNC-шары).
+  printf '\xEF\xBB\xBF' > "$site/serve.ps1"
+  cat >> "$site/serve.ps1" <<'EOF'
+$ErrorActionPreference = 'Stop'
+try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch {}
+$port = 8000
+$siteDir = $PSScriptRoot
 
-echo Python не найден. Пробую установить через Chocolatey...
-where choco >nul 2>nul || (
-  echo.
-  echo Chocolatey не установлен. Установите его, запустив PowerShell от имени
-  echo администратора: https://chocolatey.org/install — затем снова запустите start.bat.
-  pause
-  exit /b 1
-)
-choco install python -y || (
-  echo.
-  echo Не удалось установить Python. Запустите start.bat от имени администратора
-  echo (правый клик — «Запуск от имени администратора»).
-  pause
-  exit /b 1
-)
-set PY=python
+# Раздавать сайт напрямую с сетевой шары нельзя: http.server Python падает на
+# os.fstat по SMB (WinError 87). Копируем сайт в локальную папку и раздаём её.
+$dst = Join-Path $env:TEMP ('edu-module-' + [guid]::NewGuid().ToString('N').Substring(0,8))
+Write-Host 'Готовлю локальную копию сайта...'
+Copy-Item -LiteralPath $siteDir -Destination $dst -Recurse -Force
 
-:run
-start "" http://localhost:8000
-%PY% -m http.server 8000 --directory "%~dp0"
-popd
+# Ищем Python; если нет — пробуем поставить через Chocolatey.
+$py = (Get-Command python -ErrorAction SilentlyContinue).Source
+if (-not $py) { $py = (Get-Command py -ErrorAction SilentlyContinue).Source }
+if (-not $py) {
+  Write-Host 'Python не найден. Пробую установить через Chocolatey...'
+  if (Get-Command choco -ErrorAction SilentlyContinue) {
+    choco install python -y
+    $py = (Get-Command python -ErrorAction SilentlyContinue).Source
+  }
+}
+if (-not $py) {
+  Write-Host 'Не удалось найти или установить Python.'
+  Write-Host 'Установите его с https://www.python.org/downloads/ и запустите снова.'
+  Read-Host 'Нажмите Enter для выхода'
+  exit 1
+}
+
+Start-Process "http://localhost:$port"
+Write-Host "Сайт открыт на http://localhost:$port"
+Write-Host 'Закройте это окно, чтобы остановить сервер.'
+try {
+  Set-Location -LiteralPath $dst
+  & $py -m http.server $port
+} finally {
+  Set-Location $env:TEMP
+  Remove-Item -LiteralPath $dst -Recurse -Force -ErrorAction SilentlyContinue
+}
 EOF
 }
 
