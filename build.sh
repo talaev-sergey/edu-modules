@@ -64,7 +64,9 @@ EOF
   cat > "$site/start.bat" <<'EOF'
 @echo off
 rem Windows: двойной клик — открывает браузер и поднимает локальный сервер.
-cd /d "%~dp0"
+rem pushd (в отличие от cd) понимает сетевые UNC-пути \\host\share, временно
+rem подключая их как диск, — иначе запуск с сетевой шары отдал бы C:\Windows.
+pushd "%~dp0"
 
 rem Ищем Python (python или py). Если нет — пробуем поставить через Chocolatey.
 where python >nul 2>nul && (set PY=python& goto run)
@@ -89,7 +91,8 @@ set PY=python
 
 :run
 start "" http://localhost:8000
-%PY% -m http.server 8000
+%PY% -m http.server 8000 --directory "%~dp0"
+popd
 EOF
 }
 
