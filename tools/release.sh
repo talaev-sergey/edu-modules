@@ -22,6 +22,10 @@ target="${1:-all}"
 BUMP="${BUMP:-minor}"      # minor | major
 DRY_RUN="${DRY_RUN:-false}"
 
+# Теги создаются на удалёнке (gh release create), поэтому подтягиваем их перед
+# расчётом версии — иначе next_version читает устаревшие локальные теги и даёт коллизию.
+git fetch --tags --quiet || true
+
 slug_for() {
   # ASCII-слаг модуля для git-тега: из .release-slug, иначе имя папки.
   local name="$1" f="modules/$1/.release-slug"
@@ -73,9 +77,12 @@ release_one() {
   fi
 
   echo "→ Релиз $name $ver (тег $new_tag)"
-  ( cd dist && sha256sum "$name.zip" > "$name.zip.sha256" )
+  # Ассеты именуем по ASCII-слагу: GitHub санитизирует не-ASCII в именах файлов
+  # (кириллица вырезается, пробелы → точки), поэтому копируем zip под слаг.
+  cp "$zip" "dist/$slug.zip"
+  ( cd dist && sha256sum "$slug.zip" > "$slug.zip.sha256" )
 
-  gh release create "$new_tag" "$zip" "dist/$name.zip.sha256" \
+  gh release create "$new_tag" "dist/$slug.zip" "dist/$slug.zip.sha256" \
     --target "${GITHUB_SHA:-$(git rev-parse HEAD)}" \
     --title "${name} ${ver}" \
     --generate-notes \
