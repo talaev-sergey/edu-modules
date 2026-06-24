@@ -1,13 +1,11 @@
 INHERIT: ../../mkdocs.base.yml
 
-# ── Только то, что уникально для модуля ──
 site_name: "От Git до Github"
 
 nav:
   - Главная: index.md
   - Подготовка к модулю: preparation.md
   - Уроки:
-      # Замените образец реальными уроками: "- N урок: lessons/lesson_NN.md"
       - 1 урок: lessons/lesson_01.md
       - 2 урок: lessons/lesson_02.md
       - 3 урок: lessons/lesson_03.md
@@ -20,7 +18,6 @@ nav:
   - Контрольная работа: test.md
   - Материалы урока: materials.md
 
-# Локальные стили модуля (в дополнение к общему stylesheets/extra.css из темы)
 extra_css:
   - stylesheets/extra.css
   - stylesheets/home-overrides.css
