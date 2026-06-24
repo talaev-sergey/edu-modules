@@ -22,7 +22,7 @@ MODULES = ROOT / "modules"
 # status: "готов" → зелёная капсула, любое другое значение → «в работе» (янтарная).
 # Модуль без записи здесь выводится без капсул.
 META: dict[str, dict[str, str]] = {
-    "git-github": {"author": "Сергей", "status": "готов"},
+    "От Git до Github": {"author": "Сергей", "status": "готов"},
     "producere": {"author": "Олеся", "status": "в работе"},
 }
 

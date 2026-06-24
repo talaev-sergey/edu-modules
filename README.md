@@ -24,7 +24,7 @@ edu-modules/
 ├── build.sh           ← сборка модуля в сайт + zip
 └── modules/
     ├── _template/     ← заготовка для нового модуля
-    ├── git-github/    ← модуль (свои docs/, content/, .claude, .codex)
+    ├── От Git до Github/  ← модуль (свои docs/, content/, .claude, .codex)
     └── producere/
 ```
 

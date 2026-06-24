@@ -4,9 +4,14 @@
 # на этапе сборки, поэтому архивы автономны.
 #
 #   ./build.sh            — собрать все модули
-#   ./build.sh git-github — собрать один модуль
+#   ./build.sh "От Git до Github" — собрать один модуль
 set -euo pipefail
 cd "$(dirname "$0")"
+
+# Локальный venv (env/) имеет приоритет, если он есть; в CI зависимости ставятся в систему.
+if [[ -x env/bin/mkdocs ]]; then
+  PATH="$PWD/env/bin:$PATH"
+fi
 
 # Базовый адрес GitHub Pages. site_url каждого модуля собирается отсюда + имя
 # папки и прокидывается в mkdocs через переменную SITE_URL (см. mkdocs.base.yml).
