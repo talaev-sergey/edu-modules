@@ -2,6 +2,9 @@
 
 | Date | Action | Files |
 |------|--------|-------|
+| 2026-06-29 | Lesson 8 template — Итоговый проект и подготовка к Unity | `content/lesson_08.docx` |
+| 2026-06-29 | Lesson 7 template — Мини-проект: простая текстовая RPG-сцена | `content/lesson_07.docx` |
+| 2026-06-29 | Lesson 6 template — Наследование и переопределение: общий родитель и разное поведение | `content/lesson_06.docx` |
 | 2026-06-29 | Lesson 5 template — Списки объектов: когда объектов становится много | `content/lesson_05.docx` |
 | 2026-06-29 | Lesson 4 template — Инкапсуляция и свойства: защищаем данные объекта | `content/lesson_04.docx` |
 | 2026-06-29 | Lesson 3 template — Конструктор: создаем объект сразу с нужными данными | `content/lesson_03.docx` |
