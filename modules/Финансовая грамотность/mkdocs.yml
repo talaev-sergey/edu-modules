@@ -4,7 +4,7 @@ INHERIT: ../../mkdocs.base.yml
 # Задайте только site_name. site_url НЕ указывайте — он подставляется
 # автоматически при сборке (build.sh → SITE_URL) из имени папки модуля:
 # https://talaev-sergey.github.io/edu-modules/<имя-папки>/
-site_name: "[Название модуля]"
+site_name: "Финансовая грамотность"
 
 nav:
   - Главная: index.md

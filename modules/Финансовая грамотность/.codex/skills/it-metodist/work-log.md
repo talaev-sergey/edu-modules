@@ -15,3 +15,5 @@
 | 2026-06-27 | Updated all lesson drafts to theory Mode B | `content/strategy.md`, `content/lesson_01.docx`, `content/lesson_02.docx`, `content/lesson_03.docx`, `content/lesson_04.docx` |
 | 2026-06-27 | Added internet service price research and market comparison blocks | `content/strategy.md`, `content/lesson_01.docx`, `content/lesson_02.docx`, `content/lesson_03.docx`, `content/lesson_04.docx` |
 | 2026-06-27 | Reworked lesson 1 around internet money examples, service value, Canva Websites practice, and generated situation images | `content/lesson_01.docx`, `content/assets/lesson_01/*.png` |
+| 2026-06-29 | Reworked lesson 2 around portfolio, service packages, client trust, and Canva Websites practice | `content/lesson_02.docx` |
+| 2026-06-29 | Added lesson 2 continuity from the «Оставить заявку» card and prepared it for the lesson 3 order form | `content/lesson_02.docx` |
