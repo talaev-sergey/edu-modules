@@ -1,10 +1,10 @@
-INHERIT: ../../mkdocs.base.yml
+﻿INHERIT: ../../mkdocs.base.yml
 
 # ── Заменить под свой модуль ──
 # Задайте только site_name. site_url НЕ указывайте — он подставляется
 # автоматически при сборке (build.sh → SITE_URL) из имени папки модуля:
 # https://talaev-sergey.github.io/edu-modules/<имя-папки>/
-site_name: "Финансовая грамотность"
+site_name: "Финансовая грамотность через IT"
 
 nav:
   - Главная: index.md
@@ -14,3 +14,4 @@ nav:
   - Домашняя работа: homework.md
   - Контрольная работа: test.md
   - Материалы урока: materials.md
+
